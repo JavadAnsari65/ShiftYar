@@ -1,0 +1,53 @@
+﻿using ShiftYar.Domain.Entities.SecurityModel;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ShiftYar.Domain.Entities.UserModel
+{
+    public class User
+    {
+        [Key]
+        public int? Id { get; set; }
+        public string? FullName { get; set; }
+        public string? PhoneNumberMembership { get; set; }
+        public string? Password { get; set; }
+        public string? NationalCode { get; set; }
+        public string? PersonnelCode { get; set; }
+        public DateTime? DateOfEmployment { get; set; } // تاریخ استخدام
+        public bool? IsProjectPersonnel { get; set; } // آیا پرسنل طرحی است یا خیر
+        public string? Email { get; set; }
+        public string? Address { get; set; }
+        public bool? IsActive { get; set; }
+        public string? Image { get; set; }
+        public List<UserPhoneNumber>? OtherPhoneNumbers { get; set; }
+
+        //هر کاربر می تواند یک یا چند نقش داشته باشد
+        public ICollection<UserRole>? UserRoles { get; set; } // Admin, User, etc.
+        public ICollection<RefreshToken> RefreshTokens { get; set; }
+        public ICollection<LoginHistory> LoginHistories { get; set; } // تاریخچه ورود
+
+        public User()
+        {
+            this.Id = null;
+            this.FullName = null;
+            this.PhoneNumberMembership = null;
+            this.Password = null;
+            this.NationalCode = null;
+            this.PersonnelCode = null;
+            this.DateOfEmployment = null;
+            this.IsProjectPersonnel = null;
+            this.IsActive = null;
+            this.Email = null;
+            this.OtherPhoneNumbers = new List<UserPhoneNumber>();
+            this.Address = null;
+            this.Image = null;
+            this.UserRoles = new List<UserRole>();
+            this.RefreshTokens = new List<RefreshToken>();
+        }
+    }
+}

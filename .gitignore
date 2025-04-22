@@ -1,0 +1,26 @@
+# Ignore Visual Studio user-specific files
+.vs/
+*.user
+*.suo
+
+# Build results
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# User secrets
+secrets.json
+
+# EF migration logs and custom scripts (اختیاری)
+migration-log.txt
+add-migration.ps1
+BeforAddMigrationInPowerShellWindow.txt
+
+# Rider or VS Code settings (optional)
+.idea/
+.vscode/

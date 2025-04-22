@@ -1,0 +1,3 @@
+﻿
+
+// محل تعریف آیتم هایی مثل IRepository یا IEntity
