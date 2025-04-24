@@ -17,6 +17,7 @@ using ShiftYar.Application.Common.Mappings;
 using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Infrastructure.Persistence.Repositories;
 using Application;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,11 @@ builder.Services.AddControllers(options =>
     ///یعنی روی همه‌ی کنترلرها و اکشن‌ها به طور پیش‌فرض اعمال می‌شن. نیازی نیست جایی جداگانه بنویسی.
     options.Filters.Add<GlobalExceptionFilter>();
     options.Filters.Add<ValidateModelFilter>();
+})
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
 });
 
 // ثبت DIها

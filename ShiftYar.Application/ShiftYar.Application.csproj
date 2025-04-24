@@ -7,15 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Comments.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ShiftYar.Domain\ShiftYar.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>

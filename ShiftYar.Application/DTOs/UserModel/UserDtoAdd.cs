@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ShiftYar.Application.DTOs.UserModel
 {
-    public class UserDto
+    public class UserDtoAdd
     {
         //public int? Id { get; set; }
 
@@ -38,30 +38,10 @@ namespace ShiftYar.Application.DTOs.UserModel
 
         public string? Image { get; set; }
 
-        //public List<UserPhoneNumber>? OtherPhoneNumbers { get; set; }
+        //هر کاربر میتواند چند شماره داشته باشد
         public List<string>? OtherPhoneNumbers { get; set; }
 
-        //public ICollection<UserRole>? UserRoles { get; set; }
+        //هر کاربر می تواند یک یا چند نقش داشته باشد
         public List<int>? UserRoles { get; set; }
     }
-
-    //public class UserDto
-    //{
-    //    public int? Id { get; set; }
-    //    public string? FullName { get; set; }
-    //    public string? PhoneNumberMembership { get; set; }
-    //    public string? Password { get; set; }
-    //    public string? NationalCode { get; set; }
-    //    public string? PersonnelCode { get; set; }
-    //    public DateTime? DateOfEmployment { get; set; } // تاریخ استخدام
-    //    public bool? IsProjectPersonnel { get; set; } // آیا پرسنل طرحی است یا خیر
-    //    public string? Email { get; set; }
-    //    public string? Address { get; set; }
-    //    public bool? IsActive { get; set; }
-    //    public string? Image { get; set; }
-    //    public List<UserPhoneNumber>? OtherPhoneNumbers { get; set; }
-
-    //    //هر کاربر می تواند یک یا چند نقش داشته باشد
-    //    public ICollection<UserRole>? UserRoles { get; set; } // Admin, User, etc.
-    //}
 }

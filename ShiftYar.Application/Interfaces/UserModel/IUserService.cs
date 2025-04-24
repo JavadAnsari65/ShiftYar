@@ -11,10 +11,10 @@ namespace ShiftYar.Application.Interfaces.UserModel
 {
     public interface IUserService
     {
-        Task<ApiResponse<List<UserDto>>> GetFilteredUsersAsync(UserFilter filter);
-        Task<ApiResponse<UserDto>> GetByIdAsync(int id);
-        Task<ApiResponse<UserDto>> CreateAsync(UserDto dto);
-        Task<ApiResponse<UserDto>> UpdateAsync(int id, UserDto dto);
+        Task<ApiResponse<List<UserDtoGet>>> GetFilteredUsersAsync(UserFilter filter);
+        Task<ApiResponse<UserDtoAdd>> GetByIdAsync(int id);
+        Task<ApiResponse<UserDtoAdd>> CreateAsync(UserDtoAdd dto);
+        Task<ApiResponse<UserDtoAdd>> UpdateAsync(int id, UserDtoAdd dto);
         Task<ApiResponse<string>> DeleteAsync(int id);
     }
 }

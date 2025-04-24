@@ -6,6 +6,7 @@ using ShiftYar.Application.DTOs.UserModel;
 using ShiftYar.Application.Features.UserModel.Filters;
 using ShiftYar.Application.Features.UserModel.Services;
 using ShiftYar.Application.Interfaces.Security;
+using ShiftYar.Application.Interfaces.UserModel;
 using ShiftYar.Domain.Entities.UserModel;
 using ShiftYar.Infrastructure.Persistence.AppDbContext;
 
@@ -14,10 +15,10 @@ namespace ShiftYar.Api.Controllers.UserModel
     public class UserController : BaseController
     {
         private readonly IJwtService _jwtService;
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
 
-        public UserController(ShiftYarDbContext context, IJwtService jwtService, UserService userService, ILogger<UserController> logger) : base(context)
+        public UserController(ShiftYarDbContext context, IJwtService jwtService, IUserService userService, ILogger<UserController> logger) : base(context)
         {
             _jwtService = jwtService;
             _userService = userService;
@@ -42,7 +43,7 @@ namespace ShiftYar.Api.Controllers.UserModel
 
         // افزودن کاربر جدید
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] UserDto dto)
+        public async Task<IActionResult> CreateUser([FromBody] UserDtoAdd dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ApiResponse<string>.Fail("ورودی نامعتبر است."));
@@ -55,7 +56,7 @@ namespace ShiftYar.Api.Controllers.UserModel
 
         // ویرایش کاربر
         [HttpPut]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDto dto)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDtoAdd dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ApiResponse<string>.Fail("ورودی نامعتبر است."));
