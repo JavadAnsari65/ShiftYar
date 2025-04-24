@@ -23,7 +23,34 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public async Task<List<T>> GetByFilterAsync(IFilter<T> filter = null, bool includeAllNestedCollections = true, params Expression<Func<T, object>>[] includes)
+        //public async Task<List<T>> GetByFilterAsync(IFilter<T> filter = null, bool includeAllNestedCollections = true, params Expression<Func<T, object>>[] includes)
+        //{
+        //    IQueryable<T> query = _dbSet;
+
+        //    // Include specified includes
+        //    foreach (var include in includes)
+        //        query = query.Include(include);
+
+        //    // If includeAllNestedCollections is true, include all navigation properties
+        //    if (includeAllNestedCollections)
+        //    {
+        //        var entityType = _context.Model.FindEntityType(typeof(T));
+        //        if (entityType != null)
+        //        {
+        //            foreach (var navigation in entityType.GetNavigations())
+        //            {
+        //                query = query.Include(navigation.Name);
+        //            }
+        //        }
+        //    }
+
+        //    if (filter != null)
+        //        query = query.Where(filter.GetExpression());
+
+        //    return await query.ToListAsync();
+        //}
+
+        public async Task<List<T>> GetByFilterAsync(IFilter<T> filter = null, params string[] includes)
         {
             IQueryable<T> query = _dbSet;
 
@@ -31,24 +58,12 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories
             foreach (var include in includes)
                 query = query.Include(include);
 
-            // If includeAllNestedCollections is true, include all navigation properties
-            if (includeAllNestedCollections)
-            {
-                var entityType = _context.Model.FindEntityType(typeof(T));
-                if (entityType != null)
-                {
-                    foreach (var navigation in entityType.GetNavigations())
-                    {
-                        query = query.Include(navigation.Name);
-                    }
-                }
-            }
-
             if (filter != null)
                 query = query.Where(filter.GetExpression());
 
             return await query.ToListAsync();
         }
+
 
         public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
         {

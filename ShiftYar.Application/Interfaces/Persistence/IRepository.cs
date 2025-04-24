@@ -12,7 +12,7 @@ namespace ShiftYar.Application.Interfaces.Persistence
     public interface IRepository<T> where T : class
     {
         // دریافت لیست براساس فیلتر و بارگذاری روابط
-        Task<List<T>> GetByFilterAsync(IFilter<T> filter = null, bool includeAllNestedCollections = true, params Expression<Func<T, object>>[] includes);
+        Task<List<T>> GetByFilterAsync(IFilter<T> filter = null, params string[] includes);
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
         Task<T> GetByIdAsync(object id);
         Task AddAsync(T entity);

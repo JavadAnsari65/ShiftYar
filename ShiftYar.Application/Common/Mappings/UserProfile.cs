@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ShiftYar.Application.DTOs.UserModel;
+using ShiftYar.Domain.Entities.RoleModel;
 using ShiftYar.Domain.Entities.UserModel;
 using System;
 using System.Collections.Generic;
@@ -40,13 +41,48 @@ namespace ShiftYar.Application.Common.Mappings
             CreateMap<UserRole, UserRole>()
                 .ForMember(dest => dest.User, opt => opt.Ignore());
 
+            //CreateMap<User, UserDtoGet>()
+            //    .ForMember(dest => dest.OtherPhoneNumbers, opt => opt.MapFrom(src =>
+            //        src.OtherPhoneNumbers.Select(p => new UserPhoneNumber
+            //        {
+            //            Id = p.Id,
+            //            PhoneNumber = p.PhoneNumber,
+            //            UserId = p.UserId
+            //        }).ToList()))
+            //    .ForMember(dest => dest.UserRoles, opt => opt.MapFrom(src =>
+            //        src.UserRoles.Select(r => new UserRole
+            //        {
+            //            Id = r.Id,
+            //            UserId = r.UserId,
+            //            RoleId = r.RoleId,
+            //            Role = r.Role
+            //        }).ToList()));
+
+            //CreateMap<UserDtoGet, User>()
+            //    .ForMember(dest => dest.OtherPhoneNumbers, opt => opt.MapFrom(src =>
+            //        src.OtherPhoneNumbers.Select(p => new UserPhoneNumber
+            //        {
+            //            Id = p.Id,
+            //            PhoneNumber = p.PhoneNumber,
+            //            UserId = p.UserId
+            //        }).ToList()))
+            //    .ForMember(dest => dest.UserRoles, opt => opt.MapFrom(src =>
+            //        src.UserRoles.Select(r => new UserRole
+            //        {
+            //            Id = r.Id,
+            //            UserId = r.UserId,
+            //            RoleId = r.RoleId,
+            //            Role = r.Role
+            //        }).ToList()));
+
             CreateMap<User, UserDtoGet>()
                 .ForMember(dest => dest.OtherPhoneNumbers, opt => opt.MapFrom(src =>
                     src.OtherPhoneNumbers.Select(p => new UserPhoneNumber
                     {
                         Id = p.Id,
                         PhoneNumber = p.PhoneNumber,
-                        UserId = p.UserId
+                        UserId = p.UserId,
+                        IsActive = p.IsActive
                     }).ToList()))
                 .ForMember(dest => dest.UserRoles, opt => opt.MapFrom(src =>
                     src.UserRoles.Select(r => new UserRole
@@ -54,7 +90,12 @@ namespace ShiftYar.Application.Common.Mappings
                         Id = r.Id,
                         UserId = r.UserId,
                         RoleId = r.RoleId,
-                        Role = r.Role
+                        Role = r.Role != null ? new Role
+                        {
+                            Id = r.Role.Id,
+                            Name = r.Role.Name,
+                            IsActive = r.Role.IsActive
+                        } : null
                     }).ToList()));
 
             CreateMap<UserDtoGet, User>()
@@ -63,7 +104,8 @@ namespace ShiftYar.Application.Common.Mappings
                     {
                         Id = p.Id,
                         PhoneNumber = p.PhoneNumber,
-                        UserId = p.UserId
+                        UserId = p.UserId,
+                        IsActive = p.IsActive
                     }).ToList()))
                 .ForMember(dest => dest.UserRoles, opt => opt.MapFrom(src =>
                     src.UserRoles.Select(r => new UserRole
@@ -71,7 +113,12 @@ namespace ShiftYar.Application.Common.Mappings
                         Id = r.Id,
                         UserId = r.UserId,
                         RoleId = r.RoleId,
-                        Role = r.Role
+                        Role = r.Role != null ? new Role
+                        {
+                            Id = r.Role.Id,
+                            Name = r.Role.Name,
+                            IsActive = r.Role.IsActive
+                        } : null
                     }).ToList()));
         }
     }
