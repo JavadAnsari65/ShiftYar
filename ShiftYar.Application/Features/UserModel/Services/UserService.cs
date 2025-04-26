@@ -25,23 +25,6 @@ namespace ShiftYar.Application.Features.UserModel.Services
             _mapper = mapper;
         }
 
-        //public async Task<ApiResponse<List<UserDtoGet>>> GetFilteredUsersAsync(UserFilter filter)
-        //{
-        //    // includeAllNestedCollections By Default true
-        //    //var users = await _repository.GetByFilterAsync(filter);
-        //    var users = await _repository.GetByFilterAsync(filter, includeAllNestedCollections: true);
-        //    // var users = await _repository.GetByFilterAsync(filter, includeAllNestedCollections: false);
-        //    var data = _mapper.Map<List<UserDtoGet>>(users);
-        //    return ApiResponse<List<UserDtoGet>>.Success(data);
-        //}
-
-        //public async Task<ApiResponse<List<UserDtoGet>>> GetFilteredUsersAsync(UserFilter filter)
-        //{
-        //    var users = await _repository.GetByFilterAsync(filter, includeAllNestedCollections: true);
-        //    var data = _mapper.Map<List<UserDtoGet>>(users);
-        //    return ApiResponse<List<UserDtoGet>>.Success(data);
-        //}
-
         public async Task<ApiResponse<List<UserDtoGet>>> GetFilteredUsersAsync(UserFilter filter)
         {
             var users = await _repository.GetByFilterAsync(

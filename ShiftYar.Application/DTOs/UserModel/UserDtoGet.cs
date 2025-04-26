@@ -10,6 +10,7 @@ namespace ShiftYar.Application.DTOs.UserModel
 {
     public class UserDtoGet
     {
+        public int Id { get; set; }
         public string? FullName { get; set; }
         public string? PhoneNumberMembership { get; set; }
         public string? NationalCode { get; set; }
