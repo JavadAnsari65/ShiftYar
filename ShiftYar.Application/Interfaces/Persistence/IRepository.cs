@@ -14,7 +14,8 @@ namespace ShiftYar.Application.Interfaces.Persistence
         // دریافت لیست براساس فیلتر و بارگذاری روابط
         Task<List<T>> GetByFilterAsync(IFilter<T> filter = null, params string[] includes);
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
-        Task<T> GetByIdAsync(object id);
+        //Task<T> GetByIdAsync(object id);
+        Task<T> GetByIdAsync(object id, params string[] includes);
         Task AddAsync(T entity);
         void Update(T entity);
         void Delete(T entity);

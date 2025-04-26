@@ -70,9 +70,22 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories
             return await _dbSet.AnyAsync(predicate);
         }
 
-        public async Task<T> GetByIdAsync(object id)
+
+        //public async Task<T> GetByIdAsync(object id)
+        //{
+        //    return await _dbSet.FindAsync(id);
+        //}
+        public async Task<T> GetByIdAsync(object id, params string[] includes)
         {
-            return await _dbSet.FindAsync(id);
+            IQueryable<T> query = _dbSet;
+
+            // Include specified includes
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.FirstOrDefaultAsync(e => EF.Property<object>(e, "Id").Equals(id));
         }
 
         public async Task AddAsync(T entity)

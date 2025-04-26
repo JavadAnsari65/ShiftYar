@@ -37,6 +37,7 @@ namespace ShiftYar.Api.Controllers.UserModel
         [HttpGet]
         public async Task<IActionResult> GetUser(int id)
         {
+            //var result = await _userService.GetByIdAsync(id, "OtherPhoneNumbers", "UserRoles", "UserRoles.Role");
             var result = await _userService.GetByIdAsync(id);
             return result.IsSuccess ? Ok(result) : NotFound(result);
         }
