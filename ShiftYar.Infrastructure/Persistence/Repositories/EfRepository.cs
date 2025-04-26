@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ShiftYar.Infrastructure.Persistence.Repositories
 {
-    public class EfRepository<T> : IRepository<T> where T : class
+    public class EfRepository<T> : IEfRepository<T> where T : class
     {
         private readonly ShiftYarDbContext _context;
         private readonly DbSet<T> _dbSet;

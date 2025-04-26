@@ -25,7 +25,7 @@ namespace ShiftYar.Infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("ShiftYarDbConnection")));
 
             // ریپازیتوری عمومی
-            services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+            services.AddScoped(typeof(IEfRepository<>), typeof(EfRepository<>));
 
             return services;
         }

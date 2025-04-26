@@ -92,7 +92,7 @@ builder.Services.AddDbContext<ShiftYarDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ShiftYarDbConnection")));
 builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+builder.Services.AddScoped(typeof(IEfRepository<>), typeof(EfRepository<>));
 
 
 builder.Services.AddScoped<RequestLoggingFilter>();

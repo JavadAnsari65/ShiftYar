@@ -37,10 +37,10 @@ namespace ShiftYar.Api.Controllers.UserModel
         [HttpGet]
         public async Task<IActionResult> GetUser(int id)
         {
-            //var result = await _userService.GetByIdAsync(id, "OtherPhoneNumbers", "UserRoles", "UserRoles.Role");
             var result = await _userService.GetByIdAsync(id);
             return result.IsSuccess ? Ok(result) : NotFound(result);
         }
+
 
         // افزودن کاربر جدید
         [HttpPost]
@@ -54,6 +54,7 @@ namespace ShiftYar.Api.Controllers.UserModel
             var result = await _userService.CreateAsync(dto);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+
 
         // ویرایش کاربر
         [HttpPut]
@@ -70,7 +71,7 @@ namespace ShiftYar.Api.Controllers.UserModel
 
         // حذف کاربر
         [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             _logger.LogWarning("در حال حذف کاربر {Id} توسط {User}", id, User.Identity?.Name);
 

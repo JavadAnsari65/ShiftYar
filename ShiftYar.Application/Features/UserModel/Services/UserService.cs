@@ -16,13 +16,13 @@ namespace ShiftYar.Application.Features.UserModel.Services
 {
     public class UserService : IUserService
     {
-        private readonly IRepository<User> _repository;
-        private readonly IRepository<UserPhoneNumber> _repositoryPhoneNumber;
-        private readonly IRepository<UserRole> _repositoryUserRole;
+        private readonly IEfRepository<User> _repository;
+        private readonly IEfRepository<UserPhoneNumber> _repositoryPhoneNumber;
+        private readonly IEfRepository<UserRole> _repositoryUserRole;
         private readonly IMapper _mapper; // AutoMapper
 
-        public UserService(IRepository<User> repository, IRepository<UserPhoneNumber> repositoryPhoneNumber, 
-                                IRepository<UserRole> repositoryUserRole, IMapper mapper)
+        public UserService(IEfRepository<User> repository, IEfRepository<UserPhoneNumber> repositoryPhoneNumber, 
+                                IEfRepository<UserRole> repositoryUserRole, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
@@ -54,6 +54,7 @@ namespace ShiftYar.Application.Features.UserModel.Services
         }
 
 
+        ///Create User
         public async Task<ApiResponse<UserDtoAdd>> CreateAsync(UserDtoAdd dto)
         {
             if (!string.IsNullOrEmpty(dto.NationalCode))
@@ -70,7 +71,7 @@ namespace ShiftYar.Application.Features.UserModel.Services
             return ApiResponse<UserDtoAdd>.Success(result, "کاربر با موفقیت ایجاد شد.");
         }
 
-       
+
         ///Update User
         public async Task<ApiResponse<UserDtoAdd>> UpdateAsync(int id, UserDtoAdd dto)
         {
@@ -87,8 +88,6 @@ namespace ShiftYar.Application.Features.UserModel.Services
                     {
                         _repositoryPhoneNumber.Delete(phoneNumber);
                     }
-                    await _repositoryPhoneNumber.SaveAsync();
-
                 }
                 else
                 {
@@ -101,16 +100,20 @@ namespace ShiftYar.Application.Features.UserModel.Services
                     {
                         _repositoryPhoneNumber.Delete(phoneNumber);
                     }
-                    await _repositoryPhoneNumber.SaveAsync();
 
                     // Add new phone numbers
                     foreach (var phoneNumber in dto.OtherPhoneNumbers)
                     {
                         if (!user.OtherPhoneNumbers.Any(p => p.PhoneNumber == phoneNumber))
                         {
-                            var newPhoneNumber = new UserPhoneNumber { PhoneNumber = phoneNumber, IsActive = true };
+                            var newPhoneNumber = new UserPhoneNumber
+                            {
+                                PhoneNumber = phoneNumber,
+                                IsActive = true,
+                                UserId = user.Id,
+                                User = user // Set the navigation property
+                            };
                             user.OtherPhoneNumbers.Add(newPhoneNumber);
-                            //await _repository.SaveAsync();
                         }
                     }
                 }
@@ -126,7 +129,6 @@ namespace ShiftYar.Application.Features.UserModel.Services
                     {
                         _repositoryUserRole.Delete(userRole);
                     }
-                    await _repositoryUserRole.SaveAsync();
                 }
                 else
                 {
@@ -139,16 +141,19 @@ namespace ShiftYar.Application.Features.UserModel.Services
                     {
                         _repositoryUserRole.Delete(userRole);
                     }
-                    await _repositoryUserRole.SaveAsync();
 
                     // Add new user roles
                     foreach (var roleId in dto.UserRoles)
                     {
                         if (!user.UserRoles.Any(r => r.RoleId == roleId))
                         {
-                            var newUserRole = new UserRole { RoleId = roleId, UserId = user.Id };
+                            var newUserRole = new UserRole
+                            {
+                                RoleId = roleId,
+                                UserId = user.Id,
+                                User = user // Set the navigation property
+                            };
                             user.UserRoles.Add(newUserRole);
-                            //await _repository.SaveAsync();
                         }
                     }
                 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ShiftYar.Application.Interfaces.Persistence
 {
     //اینترفیس عمومی ریپازیتوری
-    public interface IRepository<T> where T : class
+    public interface IEfRepository<T> where T : class
     {
         // دریافت لیست براساس فیلتر و بارگذاری روابط
         Task<List<T>> GetByFilterAsync(IFilter<T> filter = null, params string[] includes);
