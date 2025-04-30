@@ -32,21 +32,32 @@ namespace ShiftYar.Application.Features.UserModel.Services
             _logger = logger;
         }
 
-        public async Task<ApiResponse<List<UserDtoGet>>> GetFilteredUsersAsync(UserFilter filter)
+        ///Get All User
+        public async Task<ApiResponse<PagedResponse<UserDtoGet>>> GetFilteredUsersAsync(UserFilter filter)
         {
             _logger.LogInformation("Fetching users with filter: {@Filter}", filter);
-            var users = await _repository.GetByFilterAsync(
+            var result = await _repository.GetByFilterAsync(
                 filter,
                 "OtherPhoneNumbers",
                 "UserRoles",
                 "UserRoles.Role"
             );
-            var data = _mapper.Map<List<UserDtoGet>>(users);
-            _logger.LogInformation("Successfully fetched {Count} users", data.Count);
-            return ApiResponse<List<UserDtoGet>>.Success(data);
+            var data = _mapper.Map<List<UserDtoGet>>(result.Items);
+
+            var pagedResponse = new PagedResponse<UserDtoGet>
+            {
+                Items = data,
+                TotalCount = result.TotalCount,
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize,
+                TotalPages = (int)Math.Ceiling(result.TotalCount / (double)filter.PageSize)
+            };
+
+            _logger.LogInformation("Successfully fetched {Count} users out of {TotalCount}", data.Count, result.TotalCount);
+            return ApiResponse<PagedResponse<UserDtoGet>>.Success(pagedResponse);
         }
 
-
+       
         ///Get User
         public async Task<ApiResponse<UserDtoAdd>> GetByIdAsync(int id)
         {

@@ -1,0 +1,37 @@
+﻿using AutoMapper;
+using ShiftYar.Application.DTOs.HospitalModel;
+using ShiftYar.Application.DTOs.UserModel;
+using ShiftYar.Domain.Entities.HospitalModel;
+using ShiftYar.Domain.Entities.UserModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ShiftYar.Application.Common.Mappings
+{
+    public class HospitalProfile : Profile
+    {
+        public HospitalProfile()
+        {
+            CreateMap<Hospital, HospitalDtoAdd>()
+                .ForMember(dest => dest.PhoneNumbers, opt => opt.MapFrom(src =>
+                    src.PhoneNumbers != null ? src.PhoneNumbers.Select(p => p.PhoneNumber).ToList() : null));
+
+            CreateMap<HospitalDtoAdd, Hospital>()
+                .ForMember(dest => dest.PhoneNumbers, opt => opt.MapFrom(src =>
+                    src.PhoneNumbers != null ? src.PhoneNumbers.Select(p => new Domain.Entities.HospitalModel.HospitalPhoneNumber { PhoneNumber = p }).ToList() : null));
+
+            CreateMap<Hospital, HospitalDtoGet>()
+                .ForMember(dest => dest.PhoneNumbers, opt => opt.MapFrom(src =>
+                    src.PhoneNumbers != null ? src.PhoneNumbers.Select(p => new HospitalPhoneNumber
+                    {
+                        Id = p.Id,
+                        PhoneNumber = p.PhoneNumber,
+                        HospitalId = p.HospitalId,
+                        IsActive = p.IsActive
+                    }).ToList() : null)).ReverseMap();
+        }
+    }
+}

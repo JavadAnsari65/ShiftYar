@@ -20,6 +20,10 @@ namespace ShiftYar.Application.Features.UserModel.Filters
         public bool? IsProjectPersonnel { get; set; } // پرسنل طرحی بودن
         public string Search { get; set; } // 🔍 جستجوی ترکیبی
 
+        // Pagination parameters
+        public int PageNumber { get; set; } = 1; // شماره صفحه پیش‌فرض: 1
+        public int PageSize { get; set; } = 10; // تعداد رکورد در هر صفحه پیش‌فرض: 10
+
         public override Expression<Func<User, bool>> GetExpression()
         {
             Expression<Func<User, bool>> expression = user => true; // مقدار اولیه بدون شرط

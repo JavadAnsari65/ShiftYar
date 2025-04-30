@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace ShiftYar.Application.DTOs.HospitalModel
 {
-    public class HospitalDto_Add
+    public class HospitalDtoAdd
     {
-        public int? Id { get; set; }
         public string? SiamCode { get; set; }
         public string? Name { get; set; }
         public string? Address { get; set; }

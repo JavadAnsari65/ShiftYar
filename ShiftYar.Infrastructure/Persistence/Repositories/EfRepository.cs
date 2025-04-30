@@ -23,8 +23,7 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories
             _dbSet = _context.Set<T>();
         }
 
-
-        public async Task<List<T>> GetByFilterAsync(IFilter<T> filter = null, params string[] includes)
+        public async Task<(List<T> Items, int TotalCount)> GetByFilterAsync(IFilter<T> filter = null, params string[] includes)
         {
             IQueryable<T> query = _dbSet;
 
@@ -37,7 +36,25 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories
             if (filter != null)
                 query = query.Where(filter.GetExpression());
 
-            return await query.ToListAsync();
+            // Get total count before pagination
+            int totalCount = await query.CountAsync();
+
+            // Apply pagination if the filter is a BaseFilter with pagination properties
+            if (filter is BaseFilter<T> baseFilter)
+            {
+                var pageNumber = (int?)baseFilter.GetType().GetProperty("PageNumber")?.GetValue(baseFilter) ?? 1;
+                var pageSize = (int?)baseFilter.GetType().GetProperty("PageSize")?.GetValue(baseFilter) ?? 10;
+
+                // Ensure page number is at least 1
+                pageNumber = Math.Max(1, pageNumber);
+                // Ensure page size is at least 1
+                pageSize = Math.Max(1, pageSize);
+
+                query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            }
+
+            var items = await query.ToListAsync();
+            return (items, totalCount);
         }
 
 

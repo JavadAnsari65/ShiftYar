@@ -12,9 +12,8 @@ namespace ShiftYar.Application.Interfaces.Persistence
     public interface IEfRepository<T> where T : class
     {
         // دریافت لیست براساس فیلتر و بارگذاری روابط
-        Task<List<T>> GetByFilterAsync(IFilter<T> filter = null, params string[] includes);
+        Task<(List<T> Items, int TotalCount)> GetByFilterAsync(IFilter<T> filter = null, params string[] includes);
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
-        //Task<T> GetByIdAsync(object id);
         Task<T> GetByIdAsync(object id, params string[] includes);
         Task AddAsync(T entity);
         void Update(T entity);

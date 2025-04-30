@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Persistence\Repositories\UserModel\**" />
+    <EmbeddedResource Remove="Persistence\Repositories\UserModel\**" />
+    <None Remove="Persistence\Repositories\UserModel\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Comments.txt" />
   </ItemGroup>
 
@@ -16,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Persistence\Repositories\UserModel\" />
     <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 

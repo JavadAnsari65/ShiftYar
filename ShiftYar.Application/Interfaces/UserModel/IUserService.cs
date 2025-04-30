@@ -11,7 +11,7 @@ namespace ShiftYar.Application.Interfaces.UserModel
 {
     public interface IUserService
     {
-        Task<ApiResponse<List<UserDtoGet>>> GetFilteredUsersAsync(UserFilter filter);
+        Task<ApiResponse<PagedResponse<UserDtoGet>>> GetFilteredUsersAsync(UserFilter filter);
         Task<ApiResponse<UserDtoAdd>> GetByIdAsync(int id);
         Task<ApiResponse<UserDtoAdd>> CreateAsync(UserDtoAdd dto);
         Task<ApiResponse<UserDtoAdd>> UpdateAsync(int id, UserDtoAdd dto);
