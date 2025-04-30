@@ -2,6 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.File;
 using ShiftYar.Api.Filters;
 using ShiftYar.Application.Features.UserModel.Services;
 using ShiftYar.Application.Interfaces.HospitalModel;
@@ -16,124 +19,148 @@ using System.Text;
 using ShiftYar.Application.Common.Mappings;
 using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Infrastructure.Persistence.Repositories;
-using Application;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
-builder.Services.AddControllers(options =>
-{
-    ///این دوتا رو به صورت گلوبال در Program.cs رجیستر کردیم 
-    ///یعنی روی همه‌ی کنترلرها و اکشن‌ها به طور پیش‌فرض اعمال می‌شن. نیازی نیست جایی جداگانه بنویسی.
-    options.Filters.Add<GlobalExceptionFilter>();
-    options.Filters.Add<ValidateModelFilter>();
-})
-.AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    options.JsonSerializerOptions.WriteIndented = true;
-});
+// Configure Serilog
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext()
+    .Enrich.WithThreadId()
+    .Enrich.WithEnvironmentName()
+);
 
-// ثبت DIها
-//builder.Services.AddApplication();
-//builder.Services.AddInfrastructure(builder.Configuration);
+try
+{
+    Log.Information("Starting web application");
 
-//Add Cors
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAllOrigins",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
-});
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    // Add services
+    builder.Services.AddControllers(options =>
     {
-        Title = "ShiftYar API",
-        Version = "v1"
+        ///این دوتا رو به صورت گلوبال در Program.cs رجیستر کردیم 
+        ///یعنی روی همه‌ی کنترلرها و اکشن‌ها به طور پیش‌فرض اعمال می‌شن. نیازی نیست جایی جداگانه بنویسی.
+        options.Filters.Add<GlobalExceptionFilter>();
+        options.Filters.Add<ValidateModelFilter>();
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.WriteIndented = true;
     });
 
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "لطفاً توکن JWT را به صورت: Bearer {your token} وارد کنید"
-    });
+    // ثبت DIها
+    //builder.Services.AddApplication();
+    //builder.Services.AddInfrastructure(builder.Configuration);
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    //Add Cors
+    builder.Services.AddCors(options =>
     {
-        {
-            new OpenApiSecurityScheme
+        options.AddPolicy("AllowAllOrigins",
+            builder =>
             {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            });
     });
-});
-builder.Services.AddScoped<IHospitalService, HospitalService>();
-builder.Services.AddScoped<IJwtService, JwtService>();
 
-//DB Context
-builder.Services.AddDbContext<ShiftYarDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ShiftYarDbConnection")));
-builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped(typeof(IEfRepository<>), typeof(EfRepository<>));
-
-
-builder.Services.AddScoped<RequestLoggingFilter>();
-builder.Services.AddScoped<GlobalExceptionFilter>();
-builder.Services.AddScoped<ValidateModelFilter>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+    // Add Swagger
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(c =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
+        c.SwaggerDoc("v1", new OpenApiInfo
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-        };
+            Title = "ShiftYar API",
+            Version = "v1",
+            Description = "API for ShiftYar application"
+        });
+
+        // Add JWT Authentication
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
+        });
+
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
     });
-builder.Services.AddAuthorization();
 
-//// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-//builder.Services.AddOpenApi();
+    builder.Services.AddScoped<IHospitalService, HospitalService>();
+    builder.Services.AddScoped<IJwtService, JwtService>();
 
-var app = builder.Build();
+    //DB Context
+    builder.Services.AddDbContext<ShiftYarDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("ShiftYarDbConnection")));
+    builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
+    builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped(typeof(IEfRepository<>), typeof(EfRepository<>));
 
-// Middleware
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
+    builder.Services.AddScoped<RequestLoggingFilter>();
+    builder.Services.AddScoped<GlobalExceptionFilter>();
+    builder.Services.AddScoped<ValidateModelFilter>();
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            };
+        });
+    builder.Services.AddAuthorization();
+
+    // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+    //builder.Services.AddOpenApi();
+
+    var app = builder.Build();
+
+    // Middleware
+    if (app.Environment.IsDevelopment())
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShiftYar API V1");
-        c.RoutePrefix = string.Empty; // swagger در root باز شود
-    });
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShiftYar API V1");
+            c.RoutePrefix = string.Empty; // swagger در root باز شود
+        });
+    }
+
+    app.UseHttpsRedirection();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.MapControllers();
+
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 

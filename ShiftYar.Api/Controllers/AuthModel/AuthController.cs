@@ -15,11 +15,13 @@ namespace ShiftYar.Api.Controllers.AuthModel
     {
         private readonly IJwtService _jwtService;
         private readonly ShiftYarDbContext _context;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IJwtService jwtService, ShiftYarDbContext context)
+        public AuthController(IJwtService jwtService, ShiftYarDbContext context, ILogger<AuthController> logger)
         {
             _jwtService = jwtService;
             _context = context;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -27,6 +29,14 @@ namespace ShiftYar.Api.Controllers.AuthModel
         {
             try
             {
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+                var device = Request.Headers["User-Agent"].ToString();
+
+                _logger.LogInformation(
+                    "تلاش برای ورود | شماره تلفن: {PhoneNumber} | IP: {IpAddress} | دستگاه: {Device}",
+                    login.PhoneNumberMembership, ipAddress, device
+                );
+
                 var user = await _context.Users
                 .Include(u => u.UserRoles).ThenInclude(ur => ur.Role).ThenInclude(r => r.RolePermissions).ThenInclude(rp => rp.Permission)
                 .Include(u => u.RefreshTokens)
@@ -34,7 +44,13 @@ namespace ShiftYar.Api.Controllers.AuthModel
                 .SingleOrDefaultAsync(x => x.PhoneNumberMembership == login.PhoneNumberMembership);
 
                 if (user == null || !BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
+                {
+                    _logger.LogWarning(
+                        "ورود ناموفق | شماره تلفن: {PhoneNumber} | IP: {IpAddress} | دستگاه: {Device}",
+                        login.PhoneNumberMembership, ipAddress, device
+                    );
                     return Unauthorized(new { status = 401, message = "نام کاربری یا رمز عبور اشتباه است." });
+                }
 
                 //دریافت نقش های کاربر
                 var roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
@@ -59,11 +75,16 @@ namespace ShiftYar.Api.Controllers.AuthModel
                 user.LoginHistories.Add(new LoginHistory
                 {
                     LoginTime = DateTime.UtcNow,
-                    IPAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                    Device = Request.Headers["User-Agent"].ToString()
+                    IPAddress = ipAddress,
+                    Device = device
                 });
 
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "ورود موفق | کاربر: {UserName} (ID: {UserId}) | نقش‌ها: {Roles} | IP: {IpAddress} | دستگاه: {Device}",
+                    user.FullName, user.Id, string.Join(", ", roles), ipAddress, device
+                );
 
                 return Ok(new LoginResponseDto
                 {
@@ -75,6 +96,13 @@ namespace ShiftYar.Api.Controllers.AuthModel
             }
             catch (Exception ex)
             {
+                _logger.LogError(
+                    ex,
+                    "خطا در عملیات ورود | شماره تلفن: {PhoneNumber} | IP: {IpAddress} | دستگاه: {Device}",
+                    login.PhoneNumberMembership,
+                    HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
+                    Request.Headers["User-Agent"].ToString()
+                );
                 return BadRequest(new { status = 400, message = "عملیات با خطا مواجه شد : " + ex.Message });
             }
         }
@@ -117,18 +145,39 @@ namespace ShiftYar.Api.Controllers.AuthModel
         {
             try
             {
-                var token = await _context.RefreshTokens.FirstOrDefaultAsync(rt => rt.Token == refreshToken);
+                var user = await _context.Users
+                    .Include(u => u.RefreshTokens)
+                    .SingleOrDefaultAsync(u => u.RefreshTokens.Any(rt => rt.Token == refreshToken));
 
-                if (token == null)
-                    return NotFound(new { status = 404, message = "توکن پیدا نشد." });
+                if (user != null)
+                {
+                    var token = user.RefreshTokens.FirstOrDefault(rt => rt.Token == refreshToken);
+                    if (token != null)
+                    {
+                        token.IsRevoked = true;
+                        await _context.SaveChangesAsync();
 
-                token.IsRevoked = true;
-                await _context.SaveChangesAsync();
+                        _logger.LogInformation(
+                            "خروج موفق | کاربر: {UserName} (ID: {UserId}) | IP: {IpAddress} | دستگاه: {Device}",
+                            user.FullName,
+                            user.Id,
+                            HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
+                            Request.Headers["User-Agent"].ToString()
+                        );
+                    }
+                }
 
-                return Ok(new { status = 200, message = "کاربر با موفقیت خارج شد." });
+                return Ok(new { message = "خروج با موفقیت انجام شد" });
             }
             catch (Exception ex)
             {
+                _logger.LogError(
+                    ex,
+                    "خطا در عملیات خروج | توکن: {RefreshToken} | IP: {IpAddress} | دستگاه: {Device}",
+                    refreshToken,
+                    HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
+                    Request.Headers["User-Agent"].ToString()
+                );
                 return BadRequest(new { status = 400, message = "عملیات با خطا مواجه شد : " + ex.Message });
             }
         }
