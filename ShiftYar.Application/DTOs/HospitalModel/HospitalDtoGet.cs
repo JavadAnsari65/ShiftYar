@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShiftYar.Domain.Entities.HospitalModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,6 @@ namespace ShiftYar.Application.DTOs.HospitalModel
         public string? Description { get; set; }
         public bool? IsActive { get; set; }
         public string? Logo { get; set; }
-        public List<string>? PhoneNumbers { get; set; }
+        public List<HospitalPhoneNumber>? PhoneNumbers { get; set; }
     }
 }

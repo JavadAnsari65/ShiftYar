@@ -17,7 +17,7 @@ namespace ShiftYar.Application.Interfaces.HospitalModel
         //Task AddHospitalAsync(HospitalDtoAdd hospitalDto);
 
         Task<ApiResponse<PagedResponse<HospitalDtoGet>>> GetFilteredUsersAsync(HospitalFilter filter);
-        Task<ApiResponse<HospitalDtoAdd>> GetByIdAsync(int id);
+        Task<ApiResponse<HospitalDtoGet>> GetByIdAsync(int id);
         Task<ApiResponse<HospitalDtoAdd>> CreateAsync(HospitalDtoAdd dto);
         Task<ApiResponse<HospitalDtoAdd>> UpdateAsync(int id, HospitalDtoAdd dto);
         Task<ApiResponse<string>> DeleteAsync(int id);

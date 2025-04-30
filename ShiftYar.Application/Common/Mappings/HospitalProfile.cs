@@ -21,17 +21,25 @@ namespace ShiftYar.Application.Common.Mappings
 
             CreateMap<HospitalDtoAdd, Hospital>()
                 .ForMember(dest => dest.PhoneNumbers, opt => opt.MapFrom(src =>
-                    src.PhoneNumbers != null ? src.PhoneNumbers.Select(p => new Domain.Entities.HospitalModel.HospitalPhoneNumber { PhoneNumber = p }).ToList() : null));
+                    src.PhoneNumbers != null ? src.PhoneNumbers.Select(p => new HospitalPhoneNumber { PhoneNumber = p }).ToList() : null));
+
+            ////فقط شماره ها رو نمایش میده
+            //CreateMap<Hospital, HospitalDtoGet>()
+            //    .ForMember(dest => dest.PhoneNumbers, opt => opt.MapFrom(src =>
+            //        src.PhoneNumbers != null ? src.PhoneNumbers.Select(p => p.PhoneNumber).ToList() : null));
+
+            CreateMap<HospitalPhoneNumber, HospitalPhoneNumber>()
+                .ForMember(dest => dest.Hospital, opt => opt.Ignore());
 
             CreateMap<Hospital, HospitalDtoGet>()
                 .ForMember(dest => dest.PhoneNumbers, opt => opt.MapFrom(src =>
                     src.PhoneNumbers != null ? src.PhoneNumbers.Select(p => new HospitalPhoneNumber
                     {
                         Id = p.Id,
-                        PhoneNumber = p.PhoneNumber,
                         HospitalId = p.HospitalId,
+                        PhoneNumber = p.PhoneNumber,
                         IsActive = p.IsActive
-                    }).ToList() : null)).ReverseMap();
+                    }).ToList() : null));
         }
     }
 }
