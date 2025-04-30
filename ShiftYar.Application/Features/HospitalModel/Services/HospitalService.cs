@@ -154,7 +154,6 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories.HospitalModel
             return ApiResponse<HospitalDtoAdd>.Success(result, "ویرایش بیمارستان با موفقیت انجام شد.");
         }
 
-
         ///Delete Hospital
         public async Task<ApiResponse<string>> DeleteAsync(int id)
         {

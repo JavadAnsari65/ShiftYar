@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShiftYar.Application.Interfaces.Security
 {
-    public interface IPermissionService
+    public interface IAuthPermissionService
     {
         Task<List<string>> GetPermissionsAsync(int userId);
     }

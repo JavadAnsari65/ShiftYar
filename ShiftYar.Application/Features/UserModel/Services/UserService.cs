@@ -32,7 +32,7 @@ namespace ShiftYar.Application.Features.UserModel.Services
             _logger = logger;
         }
 
-        ///Get All User
+        /// Get All User
         public async Task<ApiResponse<PagedResponse<UserDtoGet>>> GetFilteredUsersAsync(UserFilter filter)
         {
             _logger.LogInformation("Fetching users with filter: {@Filter}", filter);
@@ -40,7 +40,8 @@ namespace ShiftYar.Application.Features.UserModel.Services
                 filter,
                 "OtherPhoneNumbers",
                 "UserRoles",
-                "UserRoles.Role"
+                "UserRoles.Role",
+                "Department"
             );
             var data = _mapper.Map<List<UserDtoGet>>(result.Items);
 
@@ -57,12 +58,12 @@ namespace ShiftYar.Application.Features.UserModel.Services
             return ApiResponse<PagedResponse<UserDtoGet>>.Success(pagedResponse);
         }
 
-       
+
         ///Get User
         public async Task<ApiResponse<UserDtoAdd>> GetByIdAsync(int id)
         {
             _logger.LogInformation("Fetching user with ID: {Id}", id);
-            var user = await _repository.GetByIdAsync(id, "OtherPhoneNumbers", "UserRoles", "UserRoles.Role");
+            var user = await _repository.GetByIdAsync(id, "OtherPhoneNumbers", "UserRoles", "UserRoles.Role", "Department");
             if (user == null)
             {
                 _logger.LogWarning("User with ID {Id} not found", id);
@@ -73,7 +74,6 @@ namespace ShiftYar.Application.Features.UserModel.Services
             _logger.LogInformation("Successfully fetched user with ID: {Id}", id);
             return ApiResponse<UserDtoAdd>.Success(dto);
         }
-
 
         ///Create User
         public async Task<ApiResponse<UserDtoAdd>> CreateAsync(UserDtoAdd dto)

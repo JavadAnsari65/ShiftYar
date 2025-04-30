@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace ShiftYar.Infrastructure.Services.Security
 {
-    public class PermissionService : IPermissionService
+    public class AuthPermissionService : IAuthPermissionService
     {
         private readonly ShiftYarDbContext _context;
 
-        public PermissionService(ShiftYarDbContext context)
+        public AuthPermissionService(ShiftYarDbContext context)
         {
             _context = context;
         }

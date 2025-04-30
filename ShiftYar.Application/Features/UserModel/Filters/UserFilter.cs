@@ -18,6 +18,7 @@ namespace ShiftYar.Application.Features.UserModel.Filters
         public string PhoneNumberMembership { get; set; } // شماره تلفن عضویت
         public bool? IsActive { get; set; } // وضعیت فعال بودن
         public bool? IsProjectPersonnel { get; set; } // پرسنل طرحی بودن
+        public int? DepartmentId { get; set; } // شناسه دپارتمان
         public string Search { get; set; } // 🔍 جستجوی ترکیبی
 
         // Pagination parameters
@@ -68,6 +69,13 @@ namespace ShiftYar.Application.Features.UserModel.Filters
             {
                 Expression<Func<User, bool>> isProjectExpr = user => user.IsProjectPersonnel == IsProjectPersonnel;
                 expression = CombineExpressions(expression, isProjectExpr);
+            }
+
+            // فیلتر براساس شناسه دپارتمان
+            if (DepartmentId.HasValue)
+            {
+                Expression<Func<User, bool>> departmentExpr = user => user.DepartmentId == DepartmentId;
+                expression = CombineExpressions(expression, departmentExpr);
             }
 
             // جستجوی ترکیبی

@@ -1,4 +1,5 @@
-﻿using ShiftYar.Domain.Entities.SecurityModel;
+﻿using ShiftYar.Domain.Entities.DepartmentModel;
+using ShiftYar.Domain.Entities.SecurityModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -24,6 +25,9 @@ namespace ShiftYar.Domain.Entities.UserModel
         public string? Address { get; set; }
         public bool? IsActive { get; set; }
         public string? Image { get; set; }
+        [ForeignKey("Department")]
+        public int? DepartmentId { get; set; } // Foreign key to Department table
+        public Department? Department { get; set; } // Navigation property to Department table
         public List<UserPhoneNumber>? OtherPhoneNumbers { get; set; }
 
         //هر کاربر می تواند یک یا چند نقش داشته باشد

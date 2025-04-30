@@ -31,12 +31,10 @@ namespace ShiftYar.Application.DTOs.UserModel
 
         [EmailAddress(ErrorMessage = "ایمیل نامعتبر است.")]
         public string? Email { get; set; }
-
         public string? Address { get; set; }
-
         public bool? IsActive { get; set; }
-
         public string? Image { get; set; }
+        public int? DepartmentId { get; set; }
 
         //هر کاربر میتواند چند شماره داشته باشد
         public List<string>? OtherPhoneNumbers { get; set; }

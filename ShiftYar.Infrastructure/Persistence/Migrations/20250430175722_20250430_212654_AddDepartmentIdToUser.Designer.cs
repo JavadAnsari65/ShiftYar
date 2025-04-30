@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShiftYar.Infrastructure.Persistence.AppDbContext;
 
@@ -11,9 +12,11 @@ using ShiftYar.Infrastructure.Persistence.AppDbContext;
 namespace ShiftYar.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ShiftYarDbContext))]
-    partial class ShiftYarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250430175722_20250430_212654_AddDepartmentIdToUser")]
+    partial class _20250430_212654_AddDepartmentIdToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,19 +131,13 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                     b.ToTable("HospitalPhoneNumbers");
                 });
 
-            modelBuilder.Entity("ShiftYar.Domain.Entities.PermissionModel.Permission", b =>
+            modelBuilder.Entity("ShiftYar.Domain.Entities.RoleModel.Permission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -364,7 +361,7 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("ShiftYar.Domain.Entities.RoleModel.RolePermission", b =>
                 {
-                    b.HasOne("ShiftYar.Domain.Entities.PermissionModel.Permission", "Permission")
+                    b.HasOne("ShiftYar.Domain.Entities.RoleModel.Permission", "Permission")
                         .WithMany("RolePermissions")
                         .HasForeignKey("PermissionId");
 
@@ -397,11 +394,9 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("ShiftYar.Domain.Entities.UserModel.User", b =>
                 {
-                    b.HasOne("ShiftYar.Domain.Entities.DepartmentModel.Department", "Department")
+                    b.HasOne("ShiftYar.Domain.Entities.DepartmentModel.Department", null)
                         .WithMany("DepartmentUsers")
                         .HasForeignKey("DepartmentId");
-
-                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("ShiftYar.Domain.Entities.UserModel.UserPhoneNumber", b =>
@@ -440,7 +435,7 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                     b.Navigation("PhoneNumbers");
                 });
 
-            modelBuilder.Entity("ShiftYar.Domain.Entities.PermissionModel.Permission", b =>
+            modelBuilder.Entity("ShiftYar.Domain.Entities.RoleModel.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
                 });

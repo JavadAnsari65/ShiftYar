@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShiftYar.Infrastructure.Persistence.AppDbContext;
 
@@ -11,9 +12,11 @@ using ShiftYar.Infrastructure.Persistence.AppDbContext;
 namespace ShiftYar.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ShiftYarDbContext))]
-    partial class ShiftYarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250430204248_20250501_001242_EditPermissionModel2")]
+    partial class _20250501_001242_EditPermissionModel2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,9 +141,6 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");

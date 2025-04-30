@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ShiftYar.Application.DTOs.UserModel;
+using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.RoleModel;
 using ShiftYar.Domain.Entities.UserModel;
 using System;
@@ -26,17 +27,11 @@ namespace ShiftYar.Application.Common.Mappings
                 .ForMember(dest => dest.UserRoles, opt => opt.MapFrom(src =>
                     src.UserRoles != null ? src.UserRoles.Select(r => new UserRole { RoleId = r }).ToList() : null));
 
-    //#################################################################################################################################
-
             CreateMap<UserPhoneNumber, UserPhoneNumber>()
                 .ForMember(dest => dest.User, opt => opt.Ignore());
 
-    //#################################################################################################################################
-
             CreateMap<UserRole, UserRole>()
                 .ForMember(dest => dest.User, opt => opt.Ignore());
-
-    //#################################################################################################################################
 
             CreateMap<User, UserDtoGet>()
                 .ForMember(dest => dest.OtherPhoneNumbers, opt => opt.MapFrom(src =>
@@ -59,7 +54,16 @@ namespace ShiftYar.Application.Common.Mappings
                             Name = r.Role.Name,
                             IsActive = r.Role.IsActive
                         } : null
-                    }).ToList()));
+                    }).ToList()))
+                .ForMember(dest => dest.Department, opt => opt.MapFrom(src =>
+                    src.Department != null ? new Department
+                    {
+                        Id = src.Department.Id,
+                        Name = src.Department.Name,
+                        Description = src.Department.Description,
+                        IsActive = src.Department.IsActive,
+                        HospitalId = src.Department.HospitalId
+                    } : null));
 
             CreateMap<UserDtoGet, User>()
                 .ForMember(dest => dest.OtherPhoneNumbers, opt => opt.MapFrom(src =>
@@ -83,10 +87,6 @@ namespace ShiftYar.Application.Common.Mappings
                             IsActive = r.Role.IsActive
                         } : null
                     }).ToList()));
-
-    //#################################################################################################################################
-
-
         }
     }
 }
