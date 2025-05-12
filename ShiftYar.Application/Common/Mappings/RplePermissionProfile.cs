@@ -13,7 +13,14 @@ namespace ShiftYar.Application.Common.Mappings
     {
         public RplePermissionProfile()
         {
-            CreateMap<RolePermission, RolePermissionDtoGet>();
+            //CreateMap<RolePermission, RolePermissionDtoGet>();
+            //CreateMap<RolePermissionDtoAdd, RolePermission>();
+
+            // Add RolePermission mappings
+            CreateMap<RolePermission, RolePermissionDtoGet>()
+                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name))
+                .ForMember(dest => dest.PermissionName, opt => opt.MapFrom(src => src.Permission.Name));
+
             CreateMap<RolePermissionDtoAdd, RolePermission>();
         }
     }

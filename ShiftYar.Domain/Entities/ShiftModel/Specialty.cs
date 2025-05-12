@@ -1,6 +1,5 @@
 ﻿using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.HospitalModel;
-using ShiftYar.Domain.Entities.UserModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,11 +7,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static ShiftYar.Domain.Enums.ShiftModel.ShiftEnums;
 
 namespace ShiftYar.Domain.Entities.ShiftModel
 {
-    public class Shift
+    ///این مدل مشخص می‌کند در یک بخش مشخص از یک بیمارستان مشخص، چه تخصص‌هایی برای حضور در برنامه شیفت بندی لازم است.
+    public class Specialty
     {
         [Key]
         public int? Id { get; set; }
@@ -25,15 +24,16 @@ namespace ShiftYar.Domain.Entities.ShiftModel
         public int? DepartmentId { get; set; }
         public Department? Department { get; set; }
 
-        [ForeignKey("Supervisor")]
-        public int? SupervisorId { get; set; }
-        public User? Supervisor { get; set; }
+        public string? SpecialtyName { get; set; } // نام تخصص مثل: هوشبری، اتاق عمل، پرستاری
 
-        public ShiftLabel? Label { get; set; } // صبح، عصر، شب
-
-        public TimeSpan? StartTime { get; set; }
-        public TimeSpan? EndTime { get; set; }
-
-        public ICollection<ShiftRequiredSpecialty>? RequiredSpecialties { get; set; }
+        public Specialty()
+        {
+            this.Id = null;
+            this.HospitalId = null;
+            this.Hospital = null;
+            this.DepartmentId = null;
+            this.Department = null;
+            this.SpecialtyName = null;
+        }
     }
 }

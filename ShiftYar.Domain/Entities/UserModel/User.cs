@@ -1,5 +1,6 @@
 ﻿using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.SecurityModel;
+using ShiftYar.Domain.Entities.ShiftModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -24,10 +25,17 @@ namespace ShiftYar.Domain.Entities.UserModel
         public string? Email { get; set; }
         public string? Address { get; set; }
         public bool? IsActive { get; set; }
+        public bool? IsSupervisor { get; set; }
         public string? Image { get; set; }
+
         [ForeignKey("Department")]
         public int? DepartmentId { get; set; } // Foreign key to Department table
         public Department? Department { get; set; } // Navigation property to Department table
+
+        [ForeignKey("Specialty")]
+        public int? SpecialtyId { get; set; }
+        public Specialty? Specialty { get; set; }
+
         public List<UserPhoneNumber>? OtherPhoneNumbers { get; set; }
 
         //هر کاربر می تواند یک یا چند نقش داشته باشد
@@ -46,12 +54,18 @@ namespace ShiftYar.Domain.Entities.UserModel
             this.DateOfEmployment = null;
             this.IsProjectPersonnel = null;
             this.IsActive = null;
+            this.IsSupervisor = null;
             this.Email = null;
             this.OtherPhoneNumbers = new List<UserPhoneNumber>();
             this.Address = null;
             this.Image = null;
             this.UserRoles = new List<UserRole>();
             this.RefreshTokens = new List<RefreshToken>();
+            this.LoginHistories = new List<LoginHistory>();
+            this.DepartmentId = null;
+            this.Department = null;
+            this.SpecialtyId = null;
+            this.Specialty = null;
         }
     }
 }

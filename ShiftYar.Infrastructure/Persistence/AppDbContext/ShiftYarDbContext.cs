@@ -5,6 +5,7 @@ using ShiftYar.Domain.Entities.PermissionModel;
 using ShiftYar.Domain.Entities.RoleModel;
 using ShiftYar.Domain.Entities.RolePermissionModel;
 using ShiftYar.Domain.Entities.SecurityModel;
+using ShiftYar.Domain.Entities.ShiftModel;
 using ShiftYar.Domain.Entities.UserModel;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,12 @@ namespace ShiftYar.Infrastructure.Persistence.AppDbContext
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
+
+        //جدول تخصص های لازم در هر شیفت
+        public DbSet<Specialty> Specialties { get; set; }
+        public DbSet<Shift> Shifts { get; set; }
+        public DbSet<ShiftRequiredSpecialty> ShiftRequiredSpecialties { get; set; }
+        public DbSet<ShiftAssignment> ShiftAssignments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
