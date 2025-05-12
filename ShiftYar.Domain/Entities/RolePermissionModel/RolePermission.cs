@@ -1,4 +1,5 @@
 ﻿using ShiftYar.Domain.Entities.PermissionModel;
+using ShiftYar.Domain.Entities.RoleModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShiftYar.Domain.Entities.RoleModel
+namespace ShiftYar.Domain.Entities.RolePermissionModel
 {
     public class RolePermission
     {
@@ -16,19 +17,19 @@ namespace ShiftYar.Domain.Entities.RoleModel
 
         [ForeignKey("Role")]
         public int? RoleId { get; set; }
-        public Role? Role { get; set; }
+        public Role Role { get; set; }
 
         [ForeignKey("Permission")]
         public int? PermissionId { get; set; }
-        public Permission? Permission { get; set; }
+        public Permission Permission { get; set; }
 
         public RolePermission()
         {
-            this.Id = null;
-            this.RoleId = null;
-            this.PermissionId = null;
-            this.Role = null;
-            this.Permission = null;
+            Id = null;
+            RoleId = null;
+            PermissionId = null;
+            Role = null;
+            Permission = null;
         }
     }
 }

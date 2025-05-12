@@ -10,6 +10,8 @@ using ShiftYar.Application.Interfaces.Security;
 using ShiftYar.Application.Interfaces.UserModel;
 using ShiftYar.Application.Interfaces.PermissionModel;
 using System.Security;
+using ShiftYar.Application.Interfaces.RolePermissionModel;
+using ShiftYar.Application.Features.RolePermissionModel.Services;
 
 namespace ShiftYar.Application
 {
@@ -32,6 +34,7 @@ namespace ShiftYar.Application
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IPermissionService, PermissionService>();
+            services.AddScoped<IRolePermissionService, RolePermissionService>();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ShiftYar.Domain.Entities.UserModel;
+﻿using ShiftYar.Domain.Entities.RolePermissionModel;
+using ShiftYar.Domain.Entities.UserModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

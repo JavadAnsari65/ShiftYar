@@ -3,6 +3,7 @@ using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.HospitalModel;
 using ShiftYar.Domain.Entities.PermissionModel;
 using ShiftYar.Domain.Entities.RoleModel;
+using ShiftYar.Domain.Entities.RolePermissionModel;
 using ShiftYar.Domain.Entities.SecurityModel;
 using ShiftYar.Domain.Entities.UserModel;
 using System;
