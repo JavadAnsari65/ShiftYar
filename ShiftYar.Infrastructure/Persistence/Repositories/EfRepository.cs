@@ -27,38 +27,45 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            // Include specified includes
-            foreach (var include in includes)
+            try
             {
-                query = query.Include(include);
+                // Include specified includes
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+
+                if (filter != null)
+                    query = query.Where(filter.GetExpression());
+
+                // Get total count before pagination
+                int totalCount = await query.CountAsync();
+
+                // Apply pagination if the filter is a BaseFilter with pagination properties
+                if (filter is BaseFilter<T> baseFilter)
+                {
+                    var pageNumber = (int?)baseFilter.GetType().GetProperty("PageNumber")?.GetValue(baseFilter) ?? 1;
+                    var pageSize = (int?)baseFilter.GetType().GetProperty("PageSize")?.GetValue(baseFilter) ?? 10;
+
+                    // Ensure page number is at least 1
+                    pageNumber = Math.Max(1, pageNumber);
+                    // Ensure page size is at least 1
+                    pageSize = Math.Max(1, pageSize);
+
+                    query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+                }
+
+                var items = await query.ToListAsync();
+                return (items, totalCount);
             }
-
-            if (filter != null)
-                query = query.Where(filter.GetExpression());
-
-            // Get total count before pagination
-            int totalCount = await query.CountAsync();
-
-            // Apply pagination if the filter is a BaseFilter with pagination properties
-            if (filter is BaseFilter<T> baseFilter)
+            catch (Exception ex)
             {
-                var pageNumber = (int?)baseFilter.GetType().GetProperty("PageNumber")?.GetValue(baseFilter) ?? 1;
-                var pageSize = (int?)baseFilter.GetType().GetProperty("PageSize")?.GetValue(baseFilter) ?? 10;
-
-                // Ensure page number is at least 1
-                pageNumber = Math.Max(1, pageNumber);
-                // Ensure page size is at least 1
-                pageSize = Math.Max(1, pageSize);
-
-                query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+                throw new Exception(ex.Message);
             }
-
-            var items = await query.ToListAsync();
-            return (items, totalCount);
         }
 
 
-        private IQueryable<TEntity> IncludeNavigations<TEntity>(IQueryable<TEntity> query, IEntityType entityType, HashSet<string> includedPaths, HashSet<string> visitedTypes, string currentPath = "")
+        private static IQueryable<TEntity> IncludeNavigations<TEntity>(IQueryable<TEntity> query, IEntityType entityType, HashSet<string> includedPaths, HashSet<string> visitedTypes, string currentPath = "")
             where TEntity : class
         {
             // If we've already processed this type in the current branch, stop to prevent cycles
@@ -118,43 +125,85 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            // Include specified includes
-            foreach (var include in includes)
-            {
-                query = query.Include(include);
-            }
+            try
+            {// Include specified includes
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
 
-            return await query.FirstOrDefaultAsync(e => EF.Property<object>(e, "Id").Equals(id));
+                return await query.FirstOrDefaultAsync(e => EF.Property<object>(e, "Id").Equals(id));
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
         public async Task AddAsync(T entity)
         {
-            await _dbSet.AddAsync(entity);
+            try
+            {
+                await _dbSet.AddAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
         public void Update(T entity)
         {
-            _dbSet.Update(entity);
+            try
+            {
+                _dbSet.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
         public void Delete(T entity)
         {
-            _dbSet.Remove(entity);
+            try
+            {
+                _dbSet.Remove(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
         public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.AnyAsync(predicate);
+            try
+            {
+                return await _dbSet.AnyAsync(predicate);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
         public async Task SaveAsync()
         {
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

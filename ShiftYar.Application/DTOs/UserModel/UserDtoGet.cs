@@ -1,4 +1,5 @@
 ﻿using ShiftYar.Domain.Entities.DepartmentModel;
+using ShiftYar.Domain.Entities.ShiftModel;
 using ShiftYar.Domain.Entities.UserModel;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ namespace ShiftYar.Application.DTOs.UserModel
         public string? Image { get; set; }
         public int? DepartmentId { get; set; }
         public Department? Department { get; set; }
+        public int? SpecialtyId { get; set; }
+        public Specialty? Specialty { get; set; }
 
         public List<UserPhoneNumber>? OtherPhoneNumbers { get; set; }
         public List<UserRole>? UserRoles { get; set; }

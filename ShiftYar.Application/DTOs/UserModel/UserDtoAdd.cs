@@ -35,6 +35,7 @@ namespace ShiftYar.Application.DTOs.UserModel
         public bool? IsActive { get; set; }
         public string? Image { get; set; }
         public int? DepartmentId { get; set; }
+        public int? SpecialtyId { get; set; }
 
         //هر کاربر میتواند چند شماره داشته باشد
         public List<string>? OtherPhoneNumbers { get; set; }

@@ -46,13 +46,21 @@ namespace ShiftYar.Api.Controllers.UserModel
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserDtoAdd dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ApiResponse<string>.Fail("ورودی نامعتبر است."));
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ApiResponse<string>.Fail("ورودی نامعتبر است."));
 
-            _logger.LogInformation("در حال ایجاد کاربر با کدملی {NationalCode} توسط {User}", dto.NationalCode, User.Identity?.Name);
+                _logger.LogInformation("در حال ایجاد کاربر با کدملی {NationalCode} توسط {User}", dto.NationalCode, User.Identity?.Name);
 
-            var result = await _userService.CreateAsync(dto);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
+                var result = await _userService.CreateAsync(dto);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ApiResponse<string>.Fail("عملیات ایجاد کاربر با خطا مواجه شد : " + ex.Message));
+            }
         }
 
 

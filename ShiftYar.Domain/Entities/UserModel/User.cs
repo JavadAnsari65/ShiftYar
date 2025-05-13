@@ -25,7 +25,6 @@ namespace ShiftYar.Domain.Entities.UserModel
         public string? Email { get; set; }
         public string? Address { get; set; }
         public bool? IsActive { get; set; }
-        public bool? IsSupervisor { get; set; }
         public string? Image { get; set; }
 
         [ForeignKey("Department")]
@@ -33,7 +32,7 @@ namespace ShiftYar.Domain.Entities.UserModel
         public Department? Department { get; set; } // Navigation property to Department table
 
         [ForeignKey("Specialty")]
-        public int? SpecialtyId { get; set; }
+        public int? SpecialtyId { get; set; }    //اول باید تخصص های درون دپارتمان بیمارستان را که قبلا توسط سوپروایزر ایجاد شده بگیریم و بعد از آن، تخصص را به کاربر نسبت بدهیم
         public Specialty? Specialty { get; set; }
 
         public List<UserPhoneNumber>? OtherPhoneNumbers { get; set; }
@@ -54,7 +53,6 @@ namespace ShiftYar.Domain.Entities.UserModel
             this.DateOfEmployment = null;
             this.IsProjectPersonnel = null;
             this.IsActive = null;
-            this.IsSupervisor = null;
             this.Email = null;
             this.OtherPhoneNumbers = new List<UserPhoneNumber>();
             this.Address = null;
