@@ -16,6 +16,7 @@ namespace ShiftYar.Application.Features.DepartmentModel.Filters
         public string? Description { get; set; }
         public bool? IsActive { get; set; }
         public int? HospitalId { get; set; }
+        public int? SupervisorId { get; set; }
         public string? Search { get; set; }
 
         // Pagination parameters
@@ -54,6 +55,12 @@ namespace ShiftYar.Application.Features.DepartmentModel.Filters
             {
                 Expression<Func<Department, bool>> hospitalExpr = department => department.HospitalId == HospitalId;
                 expression = CombineExpressions(expression, hospitalExpr);
+            }
+
+            if (SupervisorId.HasValue)
+            {
+                Expression<Func<Department, bool>> supervisorExpr = department => department.SupervisorId == SupervisorId;
+                expression = CombineExpressions(expression, supervisorExpr);
             }
 
             if (!string.IsNullOrEmpty(Search))

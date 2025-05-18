@@ -2,11 +2,7 @@
 using ShiftYar.Application.DTOs.DepartmentModel;
 using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.HospitalModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ShiftYar.Domain.Entities.UserModel;
 
 namespace ShiftYar.Application.Common.Mappings
 {
@@ -14,8 +10,11 @@ namespace ShiftYar.Application.Common.Mappings
     {
         public DepartmentProfile()
         {
-            CreateMap<Department, DepartmentDtoGet>();
+            CreateMap<Department, DepartmentDtoGet>()
+                .ForMember(dest => dest.DepartmentUsers, opt => opt.MapFrom(src => src.DepartmentUsers));
             CreateMap<Hospital, HospitalDto>();
+            CreateMap<User, SupervisorDto>();
+            CreateMap<User, UserDto>();
             CreateMap<DepartmentDtoAdd, Department>();
         }
     }

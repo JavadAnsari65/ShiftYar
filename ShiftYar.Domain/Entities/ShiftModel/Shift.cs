@@ -17,17 +17,9 @@ namespace ShiftYar.Domain.Entities.ShiftModel
         [Key]
         public int? Id { get; set; }
 
-        [ForeignKey("Hospital")]
-        public int? HospitalId { get; set; }
-        public Hospital? Hospital { get; set; }
-
         [ForeignKey("Department")]
         public int? DepartmentId { get; set; }
         public Department? Department { get; set; }
-
-        [ForeignKey("Supervisor")]
-        public int? SupervisorId { get; set; }
-        public User? Supervisor { get; set; }
 
         public ShiftLabel? Label { get; set; } // صبح، عصر، شب
 

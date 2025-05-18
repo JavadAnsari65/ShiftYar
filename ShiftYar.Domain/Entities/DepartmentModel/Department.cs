@@ -20,6 +20,10 @@ namespace ShiftYar.Domain.Entities.DepartmentModel
         public int? HospitalId { get; set; }
         public Hospital? Hospital { get; set; }
 
+        [ForeignKey("Supervisor")]
+        public int? SupervisorId { get; set; }   //تعیین مسئول بخش
+        public User? Supervisor { get; set; }
+
         public ICollection<User>? DepartmentUsers { get; set; } // لیست کاربرانی که به این دپارتمان تعلق دارند
 
         public Department()
@@ -30,6 +34,8 @@ namespace ShiftYar.Domain.Entities.DepartmentModel
             this.IsActive = null;
             this.HospitalId = null;
             this.Hospital = null;
+            this.SupervisorId = null;
+            this.Supervisor = null;
             this.DepartmentUsers = new List<User>();
         }
     }

@@ -6,11 +6,6 @@ using ShiftYar.Application.Features.UserModel.Filters;
 using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Application.Interfaces.UserModel;
 using ShiftYar.Domain.Entities.UserModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShiftYar.Application.Features.UserModel.Services
 {
@@ -91,6 +86,7 @@ namespace ShiftYar.Application.Features.UserModel.Services
                 throw new Exception("سرویس دریافت کاربر موردنظر با خطا مواجه شد : " + ex.Message);
             }
         }
+
 
         ///Create User
         public async Task<ApiResponse<UserDtoAdd>> CreateAsync(UserDtoAdd dto)

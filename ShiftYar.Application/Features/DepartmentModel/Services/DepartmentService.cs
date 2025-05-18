@@ -30,7 +30,7 @@ namespace ShiftYar.Application.Features.DepartmentModel.Services
         public async Task<ApiResponse<PagedResponse<DepartmentDtoGet>>> GetFilteredDepartmentsAsync(DepartmentFilter filter)
         {
             _logger.LogInformation("Fetching departments with filter: {@Filter}", filter);
-            var result = await _repository.GetByFilterAsync(filter, "Hospital");
+            var result = await _repository.GetByFilterAsync(filter, "Hospital", "Supervisor", "DepartmentUsers");
             var data = _mapper.Map<List<DepartmentDtoGet>>(result.Items);
 
             var pagedResponse = new PagedResponse<DepartmentDtoGet>
@@ -49,7 +49,7 @@ namespace ShiftYar.Application.Features.DepartmentModel.Services
         public async Task<ApiResponse<DepartmentDtoGet>> GetByIdAsync(int id)
         {
             _logger.LogInformation("Fetching department with ID: {Id}", id);
-            var department = await _repository.GetByIdAsync(id, "Hospital");
+            var department = await _repository.GetByIdAsync(id, "Hospital", "Supervisor", "DepartmentUsers");
             if (department == null)
             {
                 _logger.LogWarning("Department with ID {Id} not found", id);

@@ -16,10 +16,6 @@ namespace ShiftYar.Domain.Entities.ShiftModel
         [Key]
         public int? Id { get; set; }
 
-        [ForeignKey("Hospital")]
-        public int? HospitalId { get; set; }
-        public Hospital? Hospital { get; set; }
-
         [ForeignKey("Department")]
         public int? DepartmentId { get; set; }
         public Department? Department { get; set; }
@@ -29,8 +25,6 @@ namespace ShiftYar.Domain.Entities.ShiftModel
         public Specialty()
         {
             this.Id = null;
-            this.HospitalId = null;
-            this.Hospital = null;
             this.DepartmentId = null;
             this.Department = null;
             this.SpecialtyName = null;

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShiftYar.Infrastructure.Persistence.AppDbContext;
 
@@ -11,9 +12,11 @@ using ShiftYar.Infrastructure.Persistence.AppDbContext;
 namespace ShiftYar.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ShiftYarDbContext))]
-    partial class ShiftYarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250514181346_EditDepartment")]
+    partial class EditDepartment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,15 +241,25 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                     b.Property<TimeSpan?>("EndTime")
                         .HasColumnType("time");
 
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Label")
                         .HasColumnType("int");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
 
+                    b.Property<int?>("SupervisorId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
+
+                    b.HasIndex("HospitalId");
+
+                    b.HasIndex("SupervisorId");
 
                     b.ToTable("Shifts");
                 });
@@ -335,12 +348,17 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SpecialtyName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
+
+                    b.HasIndex("HospitalId");
 
                     b.ToTable("Specialties");
                 });
@@ -529,7 +547,19 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("DepartmentId");
 
+                    b.HasOne("ShiftYar.Domain.Entities.HospitalModel.Hospital", "Hospital")
+                        .WithMany()
+                        .HasForeignKey("HospitalId");
+
+                    b.HasOne("ShiftYar.Domain.Entities.UserModel.User", "Supervisor")
+                        .WithMany()
+                        .HasForeignKey("SupervisorId");
+
                     b.Navigation("Department");
+
+                    b.Navigation("Hospital");
+
+                    b.Navigation("Supervisor");
                 });
 
             modelBuilder.Entity("ShiftYar.Domain.Entities.ShiftModel.ShiftAssignment", b =>
@@ -568,7 +598,13 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("DepartmentId");
 
+                    b.HasOne("ShiftYar.Domain.Entities.HospitalModel.Hospital", "Hospital")
+                        .WithMany()
+                        .HasForeignKey("HospitalId");
+
                     b.Navigation("Department");
+
+                    b.Navigation("Hospital");
                 });
 
             modelBuilder.Entity("ShiftYar.Domain.Entities.UserModel.LoginHistory", b =>

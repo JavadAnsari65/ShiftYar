@@ -61,6 +61,11 @@ namespace ShiftYar.Infrastructure.Persistence.AppDbContext
                 .WithOne(p => p.User)
                 .HasForeignKey(p => p.UserId);
 
+            modelBuilder.Entity<Department>()
+                .HasMany(d => d.DepartmentUsers)
+                .WithOne(u => u.Department)
+                .HasForeignKey(u => u.DepartmentId);
+
             base.OnModelCreating(modelBuilder);
         }
     }

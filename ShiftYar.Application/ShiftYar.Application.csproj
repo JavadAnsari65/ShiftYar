@@ -26,4 +26,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\ShiftModel\Services\" />
+  </ItemGroup>
+
 </Project>

@@ -21,56 +21,93 @@ namespace ShiftYar.Api.Controllers.RoleModel
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResponse<RoleDtoGet>>>> GetRoles([FromQuery] RoleFilter filter)
         {
-            var result = await _roleService.GetFilteredRolesAsync(filter);
-            return Ok(result);
+            try
+            {
+                var result = await _roleService.GetFilteredRolesAsync(filter);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات دریافت نقش با خطا مواجه شد : " + ex.Message);
+            }
         }
 
         ///Get Role By Id
         [HttpGet]
         public async Task<ActionResult<ApiResponse<RoleDtoGet>>> GetRole(int id)
         {
-            var result = await _roleService.GetByIdAsync(id);
-            if (!result.IsSuccess)
+            try
             {
-                return NotFound(result);
+                var result = await _roleService.GetByIdAsync(id);
+                if (!result.IsSuccess)
+                {
+                    return NotFound(result);
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات دریافت نقش با خطا مواجه شد : " + ex.Message);
+            }
         }
+
 
         ///Create Role
         [HttpPost]
         public async Task<ActionResult<ApiResponse<RoleDtoGet>>> CreateRole([FromBody] RoleDtoAdd dto)
         {
-            var result = await _roleService.CreateAsync(dto);
-            if (!result.IsSuccess)
+            try
             {
-                return BadRequest(result);
+                var result = await _roleService.CreateAsync(dto);
+                if (!result.IsSuccess)
+                {
+                    return BadRequest(result);
+                }
+                return CreatedAtAction(nameof(GetRole), new { id = result.Data.Id }, result);
             }
-            return CreatedAtAction(nameof(GetRole), new { id = result.Data.Id }, result);
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات افزودن نقش با خطا مواجه شد : " + ex.Message);
+            }
         }
 
         ///Update Role
         [HttpPut]
         public async Task<ActionResult<ApiResponse<RoleDtoGet>>> UpdateRole(int id, [FromBody] RoleDtoAdd dto)
         {
-            var result = await _roleService.UpdateAsync(id, dto);
-            if (!result.IsSuccess)
+            try
             {
-                return NotFound(result);
+                var result = await _roleService.UpdateAsync(id, dto);
+                if (!result.IsSuccess)
+                {
+                    return NotFound(result);
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات ویرایش نقش با خطا مواجه شد : " + ex.Message);
+            }
         }
+
 
         ///Delete Role
         [HttpDelete]
         public async Task<ActionResult<ApiResponse<string>>> DeleteRole(int id)
         {
-            var result = await _roleService.DeleteAsync(id);
-            if (!result.IsSuccess)
+            try
             {
-                return NotFound(result);
+                var result = await _roleService.DeleteAsync(id);
+                if (!result.IsSuccess)
+                {
+                    return NotFound(result);
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات حذف نقش با خطا مواجه شد : " + ex.Message);
+            }
         }
     }
 }

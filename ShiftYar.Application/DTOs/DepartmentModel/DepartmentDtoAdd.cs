@@ -18,5 +18,8 @@ namespace ShiftYar.Application.DTOs.DepartmentModel
 
         [Required(ErrorMessage = "شناسه بیمارستان الزامی است.")]
         public int? HospitalId { get; set; }
+
+        [Required(ErrorMessage = "شناسه مسئول بخش الزامی است.")]
+        public int? SupervisorId { get; set; }
     }
 }
