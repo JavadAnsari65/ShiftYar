@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static ShiftYar.Domain.Enums.UserModel.UserEnums;
 
 namespace ShiftYar.Application.Features.UserModel.Filters
 {
@@ -15,9 +16,11 @@ namespace ShiftYar.Application.Features.UserModel.Filters
         public int? Id { get; set; } // شناسه کاربر
         public string FullName { get; set; } // نام کامل
         public string NationalCode { get; set; } // کد ملی
+        public string? PersonnelCode { get; set; }  //شماره کارمندی
         public string PhoneNumberMembership { get; set; } // شماره تلفن عضویت
         public bool? IsActive { get; set; } // وضعیت فعال بودن
         public bool? IsProjectPersonnel { get; set; } // پرسنل طرحی بودن
+        public UserGender? Gender { get; set; }   //جنسیت
         public int? DepartmentId { get; set; } // شناسه دپارتمان
         public string Search { get; set; } // 🔍 جستجوی ترکیبی
 
@@ -50,6 +53,13 @@ namespace ShiftYar.Application.Features.UserModel.Filters
                 expression = CombineExpressions(expression, nationalCodeExpr);
             }
 
+            // فیلتر براساس کد پرسنلی
+            if (!string.IsNullOrEmpty(PersonnelCode))
+            {
+                Expression<Func<User, bool>> personnelCodeExpr = user => user.PersonnelCode == PersonnelCode;
+                expression = CombineExpressions(expression, personnelCodeExpr);
+            }
+
             // فیلتر براساس شماره عضویت
             if (!string.IsNullOrEmpty(PhoneNumberMembership))
             {
@@ -62,6 +72,13 @@ namespace ShiftYar.Application.Features.UserModel.Filters
             {
                 Expression<Func<User, bool>> isActiveExpr = user => user.IsActive == IsActive;
                 expression = CombineExpressions(expression, isActiveExpr);
+            }
+
+            // فیلتر براساس جنسیت
+            if (Gender.HasValue)
+            {
+                Expression<Func<User, bool>> genderExpr = user => user.Gender == Gender;
+                expression = CombineExpressions(expression, genderExpr);
             }
 
             // فیلتر براساس پرسنل طرحی بودن

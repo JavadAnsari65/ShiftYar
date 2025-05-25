@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static ShiftYar.Domain.Enums.UserModel.UserEnums;
 
 namespace ShiftYar.Domain.Entities.UserModel
 {
@@ -20,6 +21,7 @@ namespace ShiftYar.Domain.Entities.UserModel
         public string? Password { get; set; }
         public string? NationalCode { get; set; }
         public string? PersonnelCode { get; set; }
+        public UserGender? Gender { get; set; }
         public DateTime? DateOfEmployment { get; set; } // تاریخ استخدام
         public bool? IsProjectPersonnel { get; set; } // آیا پرسنل طرحی است یا خیر
         public string? Email { get; set; }
@@ -50,6 +52,7 @@ namespace ShiftYar.Domain.Entities.UserModel
             this.Password = null;
             this.NationalCode = null;
             this.PersonnelCode = null;
+            this.Gender = null;
             this.DateOfEmployment = null;
             this.IsProjectPersonnel = null;
             this.IsActive = null;

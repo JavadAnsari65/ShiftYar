@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static ShiftYar.Domain.Enums.UserModel.UserEnums;
 
 namespace ShiftYar.Application.DTOs.UserModel
 {
@@ -22,11 +23,9 @@ namespace ShiftYar.Application.DTOs.UserModel
         [Required(ErrorMessage = "کد ملی الزامی است.")]
         [StringLength(10, MinimumLength = 10, ErrorMessage = "کد ملی باید 10 رقم باشد.")]
         public string? NationalCode { get; set; }
-
         public string? PersonnelCode { get; set; }
-
+        public UserGender? Gender { get; set; }
         public DateTime? DateOfEmployment { get; set; }
-
         public bool? IsProjectPersonnel { get; set; }
 
         [EmailAddress(ErrorMessage = "ایمیل نامعتبر است.")]
