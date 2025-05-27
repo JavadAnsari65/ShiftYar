@@ -6,7 +6,7 @@ using ShiftYar.Application.Features.ShiftRequiredSpecialtyModel.Filters;
 using ShiftYar.Application.Interfaces.ShiftRequiredSpecialtyModel;
 using ShiftYar.Infrastructure.Persistence.AppDbContext;
 
-namespace ShiftYar.Api.Controllers
+namespace ShiftYar.Api.Controllers.ShiftRequiredSpecialtyModel
 {
     public class ShiftRequiredSpecialtyController : BaseController
     {

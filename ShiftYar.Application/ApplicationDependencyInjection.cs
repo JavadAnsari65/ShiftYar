@@ -16,6 +16,8 @@ using ShiftYar.Application.Interfaces.SpecialtyModel;
 using ShiftYar.Application.Features.SpecialtyModel.Services;
 using ShiftYar.Application.Interfaces.ShiftRequiredSpecialtyModel;
 using ShiftYar.Application.Features.ShiftRequiredSpecialtyModel.Services;
+using ShiftYar.Application.Interfaces.ShiftModel;
+using ShiftYar.Application.Features.ShiftModel.Services;
 
 namespace ShiftYar.Application
 {
@@ -41,6 +43,7 @@ namespace ShiftYar.Application
             services.AddScoped<IRolePermissionService, RolePermissionService>();
             services.AddScoped<ISpecialtyService, SpecialtyService>();
             services.AddScoped<IShiftRequiredSpecialtyService, ShiftRequiredSpecialtyService>();
+            services.AddScoped<IShiftService, ShiftService>();
         }
     }
 }
