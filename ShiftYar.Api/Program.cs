@@ -80,9 +80,13 @@ try
     app.UseCors("AllowAll");
 
     app.UseHttpsRedirection();
+    app.UseStaticFiles();
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
+
+    // Add default route handler
+    app.MapGet("/", () => Results.Redirect("/swagger"));
 
     Log.Information("Starting the application...");
     app.Run();
