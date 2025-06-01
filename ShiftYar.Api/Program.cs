@@ -5,6 +5,12 @@ using ShiftYar.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//// Configure Kestrel
+//builder.WebHost.ConfigureKestrel(serverOptions =>
+//{
+//    serverOptions.ListenAnyIP(80); // Listen on port 80
+//});
+
 // مشخص کردن فایل تنظیمات بر اساس محیط
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -65,16 +71,23 @@ try
     Log.Information("Application built successfully");
 
     // Middleware
-    if (app.Environment.IsDevelopment())
+    // Enable Swagger in both Development and Production
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
     {
-        Log.Information("Configuring Swagger for Development environment");
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShiftYar API V1");
-            c.RoutePrefix = string.Empty; // swagger در root باز شود
-        });
-    }
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShiftYar API V1");
+        c.RoutePrefix = string.Empty; // swagger در root باز شود
+    });
+    //if (app.Environment.IsDevelopment())
+    //{
+    //    Log.Information("Configuring Swagger for Development environment");
+    //    app.UseSwagger();
+    //    app.UseSwaggerUI(c =>
+    //    {
+    //        c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShiftYar API V1");
+    //        c.RoutePrefix = string.Empty; // swagger در root باز شود
+    //    });
+    //}
 
     // Use CORS
     app.UseCors("AllowAll");
@@ -86,7 +99,7 @@ try
     app.MapControllers();
 
     // Add default route handler
-    app.MapGet("/", () => Results.Redirect("/swagger"));
+    app.MapGet("/", () => Results.Redirect("/swagger/index.html"));
 
     Log.Information("Starting the application...");
     app.Run();
