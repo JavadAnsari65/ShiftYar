@@ -29,10 +29,35 @@ namespace ShiftYar.Infrastructure
             return services;
         }
 
+        //private static void AddDbContext(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    //services.AddDbContext<ShiftYarDbContext>(options =>
+        //    //    options.UseSqlServer(configuration.GetConnectionString("ShiftYarDbConnection")));
+
+        //    services.AddDbContext<ShiftYarDbContext>(options =>
+        //        options.UseSqlServer(
+        //            configuration.GetConnectionString("DefaultConnection"),
+        //            sqlOptions => sqlOptions.CommandTimeout(180)  // زمان بر حسب ثانیه، مثلاً 180 ثانیه = 3 دقیقه
+        //    ));
+
+        //}
+
         private static void AddDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ShiftYarDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("ShiftYarDbConnection")));
+                options.UseSqlServer(
+                    configuration.GetConnectionString("DefaultConnection"),
+                    sqlOptions =>
+                    {
+                        sqlOptions.CommandTimeout(180); // 3 دقیقه
+
+                        // فعال‌سازی مجدد تلاش‌ها (RetryOnFailure)
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5, // تعداد دفعات تلاش مجدد
+                            maxRetryDelay: TimeSpan.FromSeconds(10), // فاصله تلاش مجدد
+                            errorNumbersToAdd: null // اگر شماره خطای خاصی مدنظر باشه
+                        );
+                    }));
         }
 
         private static void AddRepositories(this IServiceCollection services)

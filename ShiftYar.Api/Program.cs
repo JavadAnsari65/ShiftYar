@@ -5,6 +5,13 @@ using ShiftYar.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// مشخص کردن فایل تنظیمات بر اساس محیط
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
+
 // Configure Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
