@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ShiftYar.Application.Common.Models.ResponseModel;
 using ShiftYar.Application.DTOs.PermissionModel;
 using ShiftYar.Application.Features.PermissionModel.Filters;
 using ShiftYar.Application.Interfaces.PermissionModel;
 using ShiftYar.Application.Interfaces.Persistence;
+using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.PermissionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,12 +22,14 @@ namespace ShiftYar.Application.Features.PermissionModel.Services
         private readonly IEfRepository<Permission> _repository;
         private readonly IMapper _mapper;
         private readonly ILogger<PermissionService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PermissionService(IEfRepository<Permission> repository, IMapper mapper, ILogger<PermissionService> logger)
+        public PermissionService(IEfRepository<Permission> repository, IMapper mapper, ILogger<PermissionService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _mapper = mapper;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResponse<PagedResponse<PermissionDtoGet>>> GetFilteredPermissionsAsync(PermissionFilter filter)
@@ -66,6 +71,10 @@ namespace ShiftYar.Application.Features.PermissionModel.Services
             _logger.LogInformation("Creating new permission with name: {Name}", dto.Name);
 
             var permission = _mapper.Map<Permission>(dto);
+
+            permission.CreateDate = DateTime.Now;
+            permission.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             await _repository.AddAsync(permission);
             await _repository.SaveAsync();
 
@@ -86,6 +95,10 @@ namespace ShiftYar.Application.Features.PermissionModel.Services
             }
 
             _mapper.Map(dto, permission);
+
+            permission.UpdateDate = DateTime.Now;
+            permission.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             _repository.Update(permission);
             await _repository.SaveAsync();
 

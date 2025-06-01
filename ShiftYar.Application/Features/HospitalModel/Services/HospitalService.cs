@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ShiftYar.Application.Common.Models.ResponseModel;
 using ShiftYar.Application.DTOs.HospitalModel;
 using ShiftYar.Application.DTOs.UserModel;
 using ShiftYar.Application.Features.HospitalModel.Filters;
+using ShiftYar.Application.Interfaces.FileUploaderInterface;
 using ShiftYar.Application.Interfaces.HospitalModel;
 using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Domain.Entities.HospitalModel;
 using ShiftYar.Domain.Entities.UserModel;
+using System.Security.Claims;
 
 namespace ShiftYar.Infrastructure.Persistence.Repositories.HospitalModel
 {
@@ -17,14 +20,18 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories.HospitalModel
         private readonly IEfRepository<HospitalPhoneNumber> _repositoryPhoneNumber;
         private readonly IMapper _mapper; // AutoMapper
         private readonly ILogger<HospitalService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IFileUploader _fileUploader;
 
         public HospitalService(IEfRepository<Hospital> repository, IEfRepository<HospitalPhoneNumber> repositoryPhoneNumber,
-                                IMapper mapper, ILogger<HospitalService> logger)
+                                IMapper mapper, ILogger<HospitalService> logger, IHttpContextAccessor httpContextAccessor, IFileUploader fileUploader)
         {
             _repository = repository;
             _repositoryPhoneNumber = repositoryPhoneNumber;
             _mapper = mapper;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
+            _fileUploader = fileUploader;
         }
 
         ///Get All Hospital
@@ -82,6 +89,11 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories.HospitalModel
             }
 
             var hospital = _mapper.Map<Hospital>(dto);
+
+            hospital.Logo = _fileUploader.UploadFile(dto.Logo, "Hospitals");
+            hospital.CreateDate = DateTime.Now;
+            hospital.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             await _repository.AddAsync(hospital);
             await _repository.SaveAsync();
 
@@ -146,6 +158,13 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories.HospitalModel
 
             // Update other hospital properties
             _mapper.Map(dto, hospital);
+
+            if(dto.Logo != null)
+                hospital.Logo = _fileUploader.UpdateFile(dto.Logo, hospital.Logo, "Hospitals");
+
+            hospital.UpdateDate = DateTime.Now;
+            hospital.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             _repository.Update(hospital);
             await _repository.SaveAsync();
 

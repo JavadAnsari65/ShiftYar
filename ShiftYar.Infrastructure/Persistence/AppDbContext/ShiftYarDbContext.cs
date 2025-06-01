@@ -5,6 +5,7 @@ using ShiftYar.Domain.Entities.PermissionModel;
 using ShiftYar.Domain.Entities.RoleModel;
 using ShiftYar.Domain.Entities.RolePermissionModel;
 using ShiftYar.Domain.Entities.SecurityModel;
+using ShiftYar.Domain.Entities.ShiftDateModel;
 using ShiftYar.Domain.Entities.ShiftModel;
 using ShiftYar.Domain.Entities.UserModel;
 using System;
@@ -38,6 +39,8 @@ namespace ShiftYar.Infrastructure.Persistence.AppDbContext
         public DbSet<Shift> Shifts { get; set; }
         public DbSet<ShiftRequiredSpecialty> ShiftRequiredSpecialties { get; set; }
         public DbSet<ShiftAssignment> ShiftAssignments { get; set; }
+
+        public DbSet<ShiftDate> ShiftDates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

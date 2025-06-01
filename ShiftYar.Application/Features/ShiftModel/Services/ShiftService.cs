@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ShiftYar.Application.Common.Models.ResponseModel;
 using ShiftYar.Application.DTOs.ShiftModel;
@@ -10,6 +11,7 @@ using ShiftYar.Domain.Entities.ShiftModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,12 +22,14 @@ namespace ShiftYar.Application.Features.ShiftModel.Services
         private readonly IEfRepository<Shift> _repository;
         private readonly IMapper _mapper;
         private readonly ILogger<ShiftService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ShiftService(IEfRepository<Shift> repository, IMapper mapper, ILogger<ShiftService> logger)
+        public ShiftService(IEfRepository<Shift> repository, IMapper mapper, ILogger<ShiftService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _mapper = mapper;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResponse<PagedResponse<ShiftDtoGet>>> GetShifts(ShiftFilter filter)
@@ -95,6 +99,10 @@ namespace ShiftYar.Application.Features.ShiftModel.Services
                 _logger.LogInformation("Creating new shift");
 
                 var shift = _mapper.Map<Shift>(dto);
+
+                shift.CreateDate = DateTime.Now;
+                shift.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
                 await _repository.AddAsync(shift);
                 await _repository.SaveAsync();
 
@@ -121,6 +129,10 @@ namespace ShiftYar.Application.Features.ShiftModel.Services
                 }
 
                 _mapper.Map(dto, shift);
+
+                shift.UpdateDate = DateTime.Now;
+                shift.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
                 _repository.Update(shift);
                 await _repository.SaveAsync();
 

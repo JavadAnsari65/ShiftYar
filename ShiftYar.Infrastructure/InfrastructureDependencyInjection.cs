@@ -8,6 +8,8 @@ using ShiftYar.Infrastructure.Persistence.Repositories.HospitalModel;
 using ShiftYar.Infrastructure.Services.Security;
 using ShiftYar.Application.Interfaces.HospitalModel;
 using ShiftYar.Application.Interfaces.Security;
+using ShiftYar.Application.Interfaces.CalendarSeeder;
+using ShiftYar.Infrastructure.Services.CalendarSeeder;
 
 namespace ShiftYar.Infrastructure
 {
@@ -42,6 +44,8 @@ namespace ShiftYar.Infrastructure
         {
             services.AddScoped<IHospitalService, HospitalService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<ICalendarSeederService, CalendarSeederService>();
+
         }
     }
 }

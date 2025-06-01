@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ShiftYar.Application.Common.Models.ResponseModel;
 using ShiftYar.Application.DTOs.RoleModel;
@@ -8,11 +9,13 @@ using ShiftYar.Application.Features.RoleModel.Services;
 using ShiftYar.Application.Features.RolePermissionModel.Filters;
 using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Application.Interfaces.RolePermissionModel;
+using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.RoleModel;
 using ShiftYar.Domain.Entities.RolePermissionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,12 +26,14 @@ namespace ShiftYar.Application.Features.RolePermissionModel.Services
         private readonly IEfRepository<RolePermission> _repository;
         private readonly IMapper _mapper;
         private readonly ILogger<RolePermissionService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RolePermissionService(IEfRepository<RolePermission> repository, IMapper mapper, ILogger<RolePermissionService> logger)
+        public RolePermissionService(IEfRepository<RolePermission> repository, IMapper mapper, ILogger<RolePermissionService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _mapper = mapper;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResponse<PagedResponse<RolePermissionDtoGet>>> GetRolePermissionsAsync(RolePermissionFilter filter)
@@ -81,6 +86,10 @@ namespace ShiftYar.Application.Features.RolePermissionModel.Services
                 return ApiResponse<RolePermissionDtoGet>.Fail("This role permission already exists.");
 
             var rolePermission = _mapper.Map<RolePermission>(dto);
+
+            rolePermission.CreateDate = DateTime.Now;
+            rolePermission.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             await _repository.AddAsync(rolePermission);
             await _repository.SaveAsync();
 
@@ -113,6 +122,10 @@ namespace ShiftYar.Application.Features.RolePermissionModel.Services
             }
 
             _mapper.Map(dto, rolePermission);
+
+            rolePermission.UpdateDate = DateTime.Now;
+            rolePermission.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             _repository.Update(rolePermission);
             await _repository.SaveAsync();
 

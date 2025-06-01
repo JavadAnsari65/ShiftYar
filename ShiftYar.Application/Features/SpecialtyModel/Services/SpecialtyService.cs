@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ShiftYar.Application.Common.Models.ResponseModel;
 using ShiftYar.Application.DTOs.ShiftModel.SpecialtyModel;
 using ShiftYar.Application.Features.SpecialtyModel.Filters;
 using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Application.Interfaces.SpecialtyModel;
+using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.RolePermissionModel;
 using ShiftYar.Domain.Entities.ShiftModel;
+using System.Security.Claims;
 
 namespace ShiftYar.Application.Features.SpecialtyModel.Services
 {
@@ -15,12 +18,14 @@ namespace ShiftYar.Application.Features.SpecialtyModel.Services
         private readonly IEfRepository<Specialty> _repository;
         private readonly IMapper _mapper;
         private readonly ILogger<SpecialtyService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SpecialtyService(IEfRepository<Specialty> repository, IMapper mapper, ILogger<SpecialtyService> logger)
+        public SpecialtyService(IEfRepository<Specialty> repository, IMapper mapper, ILogger<SpecialtyService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _mapper = mapper;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResponse<PagedResponse<SpecialtyDtoGet>>> GetSpecialties(SpecialtyFilter filter)
@@ -80,6 +85,10 @@ namespace ShiftYar.Application.Features.SpecialtyModel.Services
                 _logger.LogInformation("Creating new specilty with name: {Name}", dto.SpecialtyName);
 
                 var specialty = _mapper.Map<Specialty>(dto);
+
+                specialty.CreateDate = DateTime.Now;
+                specialty.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
                 await _repository.AddAsync(specialty);
                 await _repository.SaveAsync();
 
@@ -110,6 +119,10 @@ namespace ShiftYar.Application.Features.SpecialtyModel.Services
                 }
 
                 _mapper.Map(dto, specialty);
+
+                specialty.CreateDate = DateTime.Now;
+                specialty.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
                 _repository.Update(specialty);
                 await _repository.SaveAsync();
 

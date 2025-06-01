@@ -1,4 +1,5 @@
-﻿using ShiftYar.Domain.Entities.RolePermissionModel;
+﻿using ShiftYar.Domain.Entities.BaseModel;
+using ShiftYar.Domain.Entities.RolePermissionModel;
 using ShiftYar.Domain.Entities.UserModel;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ShiftYar.Domain.Entities.RoleModel
 {
-    public class Role
+    public class Role : BaseEntity
     {
         [Key]
         public int? Id { get; set; }

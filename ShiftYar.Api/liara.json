@@ -1,0 +1,20 @@
+﻿{
+  "disks": [
+    {
+      "name": "my-disk",
+      "mountTo": "wwwroot/images"
+    },
+    {
+      "name": "video",
+      "mountTo": "wwwroot/videos"
+    },
+    {
+      "name": "files",
+      "mountTo": "wwwroot/files"
+    },
+    {
+      "name": "documents",
+      "mountTo": "wwwroot/documents"
+    }
+  ]
+}

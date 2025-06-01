@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ShiftYar.Application.Common.Models.ResponseModel;
 using ShiftYar.Application.DTOs.RoleModel;
 using ShiftYar.Application.Features.RoleModel.Filters;
 using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Application.Interfaces.RoleModel;
+using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.RoleModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,12 +22,14 @@ namespace ShiftYar.Application.Features.RoleModel.Services
         private readonly IEfRepository<Role> _repository;
         private readonly IMapper _mapper;
         private readonly ILogger<RoleService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RoleService(IEfRepository<Role> repository, IMapper mapper, ILogger<RoleService> logger)
+        public RoleService(IEfRepository<Role> repository, IMapper mapper, ILogger<RoleService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _mapper = mapper;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResponse<PagedResponse<RoleDtoGet>>> GetFilteredRolesAsync(RoleFilter filter)
@@ -68,6 +73,10 @@ namespace ShiftYar.Application.Features.RoleModel.Services
             _logger.LogInformation("Creating new role with name: {Name}", dto.Name);
 
             var role = _mapper.Map<Role>(dto);
+
+            role.CreateDate = DateTime.Now;
+            role.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             await _repository.AddAsync(role);
             await _repository.SaveAsync();
 
@@ -89,6 +98,10 @@ namespace ShiftYar.Application.Features.RoleModel.Services
             }
 
             _mapper.Map(dto, role);
+
+            role.UpdateDate = DateTime.Now;
+            role.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             _repository.Update(role);
             await _repository.SaveAsync();
 

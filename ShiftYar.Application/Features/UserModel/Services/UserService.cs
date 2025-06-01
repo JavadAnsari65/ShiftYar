@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ShiftYar.Application.Common.Models.ResponseModel;
 using ShiftYar.Application.DTOs.UserModel;
 using ShiftYar.Application.Features.UserModel.Filters;
 using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Application.Interfaces.UserModel;
+using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.UserModel;
+using System.Security.Claims;
 
 namespace ShiftYar.Application.Features.UserModel.Services
 {
@@ -16,15 +19,17 @@ namespace ShiftYar.Application.Features.UserModel.Services
         private readonly IEfRepository<UserRole> _repositoryUserRole;
         private readonly IMapper _mapper; // AutoMapper
         private readonly ILogger<UserService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UserService(IEfRepository<User> repository, IEfRepository<UserPhoneNumber> repositoryPhoneNumber,
-                                IEfRepository<UserRole> repositoryUserRole, IMapper mapper, ILogger<UserService> logger)
+                                IEfRepository<UserRole> repositoryUserRole, IMapper mapper, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _mapper = mapper;
             _repositoryPhoneNumber = repositoryPhoneNumber;
             _repositoryUserRole = repositoryUserRole;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// Get All User
@@ -106,6 +111,10 @@ namespace ShiftYar.Application.Features.UserModel.Services
                 }
 
                 var user = _mapper.Map<User>(dto);
+
+                user.CreateDate = DateTime.Now;
+                user.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
                 await _repository.AddAsync(user);
                 await _repository.SaveAsync();
 
@@ -171,6 +180,10 @@ namespace ShiftYar.Application.Features.UserModel.Services
                                     UserId = user.Id,
                                     User = user // Set the navigation property
                                 };
+
+                                newPhoneNumber.CreateDate = DateTime.Now;
+                                newPhoneNumber.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
                                 user.OtherPhoneNumbers.Add(newPhoneNumber);
                             }
                         }
@@ -212,6 +225,10 @@ namespace ShiftYar.Application.Features.UserModel.Services
                                     UserId = user.Id,
                                     User = user // Set the navigation property
                                 };
+
+                                newUserRole.CreateDate = DateTime.Now;
+                                newUserRole.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
                                 user.UserRoles.Add(newUserRole);
                             }
                         }
@@ -220,6 +237,10 @@ namespace ShiftYar.Application.Features.UserModel.Services
 
                 // Update other user properties
                 _mapper.Map(dto, user);
+
+                user.CreateDate = DateTime.Now;
+                user.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
                 _repository.Update(user);
                 await _repository.SaveAsync();
 

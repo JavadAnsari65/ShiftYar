@@ -1,4 +1,5 @@
-﻿using ShiftYar.Domain.Entities.DepartmentModel;
+﻿using ShiftYar.Domain.Entities.BaseModel;
+using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.HospitalModel;
 using ShiftYar.Domain.Entities.UserModel;
 using System;
@@ -12,7 +13,7 @@ using static ShiftYar.Domain.Enums.ShiftModel.ShiftEnums;
 
 namespace ShiftYar.Domain.Entities.ShiftModel
 {
-    public class Shift
+    public class Shift : BaseEntity
     {
         [Key]
         public int? Id { get; set; }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ShiftYar.Application.Common.Models.ResponseModel;
 using ShiftYar.Application.DTOs.DepartmentModel;
@@ -9,6 +10,8 @@ using ShiftYar.Domain.Entities.DepartmentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,12 +22,14 @@ namespace ShiftYar.Application.Features.DepartmentModel.Services
         private readonly IEfRepository<Department> _repository;
         private readonly IMapper _mapper;
         private readonly ILogger<DepartmentService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DepartmentService(IEfRepository<Department> repository, IMapper mapper, ILogger<DepartmentService> logger)
+        public DepartmentService(IEfRepository<Department> repository, IMapper mapper, ILogger<DepartmentService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _mapper = mapper;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResponse<PagedResponse<DepartmentDtoGet>>> GetFilteredDepartmentsAsync(DepartmentFilter filter)
@@ -66,6 +71,10 @@ namespace ShiftYar.Application.Features.DepartmentModel.Services
             _logger.LogInformation("Creating new department with name: {Name}", dto.Name);
 
             var department = _mapper.Map<Department>(dto);
+
+            department.CreateDate = DateTime.Now;
+            department.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             await _repository.AddAsync(department);
             await _repository.SaveAsync();
 
@@ -86,6 +95,10 @@ namespace ShiftYar.Application.Features.DepartmentModel.Services
             }
 
             _mapper.Map(dto, department);
+
+            department.UpdateDate = DateTime.Now;
+            department.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             _repository.Update(department);
             await _repository.SaveAsync();
 

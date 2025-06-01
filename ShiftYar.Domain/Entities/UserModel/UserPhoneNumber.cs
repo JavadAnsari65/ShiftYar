@@ -6,10 +6,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ShiftYar.Domain.Entities.BaseModel;
 
 namespace ShiftYar.Domain.Entities.UserModel
 {
-    public class UserPhoneNumber
+    public class UserPhoneNumber : BaseEntity
     {
         [Key]
         public int? Id { get; set; }

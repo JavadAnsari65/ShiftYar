@@ -1,4 +1,5 @@
-﻿using ShiftYar.Domain.Entities.HospitalModel;
+﻿using ShiftYar.Domain.Entities.BaseModel;
+using ShiftYar.Domain.Entities.HospitalModel;
 using ShiftYar.Domain.Entities.UserModel;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ShiftYar.Domain.Entities.DepartmentModel
 {
-    public class Department
+    public class Department : BaseEntity
     {
         public int? Id { get; set; }
         public string? Name { get; set; }

@@ -1,4 +1,6 @@
-﻿using ShiftYar.Domain.Entities.UserModel;
+﻿using ShiftYar.Domain.Entities.BaseModel;
+using ShiftYar.Domain.Entities.ShiftDateModel;
+using ShiftYar.Domain.Entities.UserModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,11 +11,14 @@ using System.Threading.Tasks;
 
 namespace ShiftYar.Domain.Entities.ShiftModel
 {
-    public class ShiftAssignment
+    public class ShiftAssignment : BaseEntity
     {
         [Key]
         public int? Id { get; set; }
-        public DateTime? ShiftDate { get; set; } // تاریخ اجرای این شیفت
+
+        [ForeignKey("ShiftDate")]
+        public int? ShiftDateId { get; set; } // تاریخ اجرای این شیفت
+        public ShiftDate? ShiftDate { get; set; }
 
         [ForeignKey("Shift")]
         public int? ShiftId { get; set; }

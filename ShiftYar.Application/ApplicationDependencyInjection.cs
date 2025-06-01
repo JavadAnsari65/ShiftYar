@@ -18,6 +18,8 @@ using ShiftYar.Application.Interfaces.ShiftRequiredSpecialtyModel;
 using ShiftYar.Application.Features.ShiftRequiredSpecialtyModel.Services;
 using ShiftYar.Application.Interfaces.ShiftModel;
 using ShiftYar.Application.Features.ShiftModel.Services;
+using ShiftYar.Application.Interfaces.FileUploaderInterface;
+using ShiftYar.Application.Features.FileUploader.Services;
 
 namespace ShiftYar.Application
 {
@@ -44,6 +46,7 @@ namespace ShiftYar.Application
             services.AddScoped<ISpecialtyService, SpecialtyService>();
             services.AddScoped<IShiftRequiredSpecialtyService, ShiftRequiredSpecialtyService>();
             services.AddScoped<IShiftService, ShiftService>();
+            services.AddScoped<IFileUploader, FileUploaderService>();
         }
     }
 }

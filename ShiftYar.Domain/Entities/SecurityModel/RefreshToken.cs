@@ -1,4 +1,5 @@
-﻿using ShiftYar.Domain.Entities.UserModel;
+﻿using ShiftYar.Domain.Entities.BaseModel;
+using ShiftYar.Domain.Entities.UserModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ShiftYar.Domain.Entities.SecurityModel
 {
-    public class RefreshToken
+    public class RefreshToken : BaseEntity
     {
         [Key]
         public int? Id { get; set; }

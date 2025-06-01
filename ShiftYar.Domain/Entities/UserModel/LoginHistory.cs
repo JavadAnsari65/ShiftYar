@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShiftYar.Domain.Entities.BaseModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ShiftYar.Domain.Entities.UserModel
 {
-    public class LoginHistory
+    public class LoginHistory : BaseEntity
     {
         [Key]
         public int? Id { get; set; }

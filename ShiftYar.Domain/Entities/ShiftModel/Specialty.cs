@@ -1,4 +1,5 @@
-﻿using ShiftYar.Domain.Entities.DepartmentModel;
+﻿using ShiftYar.Domain.Entities.BaseModel;
+using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.HospitalModel;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 namespace ShiftYar.Domain.Entities.ShiftModel
 {
     ///این مدل مشخص می‌کند در یک بخش مشخص از یک بیمارستان مشخص، چه تخصص‌هایی برای حضور در برنامه شیفت بندی لازم است.
-    public class Specialty
+    public class Specialty : BaseEntity
     {
         [Key]
         public int? Id { get; set; }

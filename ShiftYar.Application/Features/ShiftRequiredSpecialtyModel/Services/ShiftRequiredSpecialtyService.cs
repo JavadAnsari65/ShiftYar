@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ShiftYar.Application.Common.Models.ResponseModel;
 using ShiftYar.Application.DTOs.ShiftModel.ShiftRequiredSpecialtyModel;
 using ShiftYar.Application.Features.ShiftRequiredSpecialtyModel.Filters;
 using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Application.Interfaces.ShiftRequiredSpecialtyModel;
+using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.ShiftModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,12 +22,14 @@ namespace ShiftYar.Application.Features.ShiftRequiredSpecialtyModel.Services
         private readonly IEfRepository<ShiftRequiredSpecialty> _repository;
         private readonly IMapper _mapper;
         private readonly ILogger<ShiftRequiredSpecialtyService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ShiftRequiredSpecialtyService(IEfRepository<ShiftRequiredSpecialty> repository, IMapper mapper, ILogger<ShiftRequiredSpecialtyService> logger)
+        public ShiftRequiredSpecialtyService(IEfRepository<ShiftRequiredSpecialty> repository, IMapper mapper, ILogger<ShiftRequiredSpecialtyService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _mapper = mapper;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResponse<PagedResponse<ShiftRequiredSpecialtyDtoGet>>> GetShiftRequiredSpecialties(ShiftRequiredSpecialtyFilter filter)
@@ -82,6 +87,10 @@ namespace ShiftYar.Application.Features.ShiftRequiredSpecialtyModel.Services
                 _logger.LogInformation("Creating new shift required specialty");
 
                 var shiftRequiredSpecialty = _mapper.Map<ShiftRequiredSpecialty>(dto);
+
+                shiftRequiredSpecialty.CreateDate = DateTime.Now;
+                shiftRequiredSpecialty.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
                 await _repository.AddAsync(shiftRequiredSpecialty);
                 await _repository.SaveAsync();
 
@@ -107,6 +116,10 @@ namespace ShiftYar.Application.Features.ShiftRequiredSpecialtyModel.Services
             }
 
             _mapper.Map(dto, shiftRequiredSpecialty);
+
+            shiftRequiredSpecialty.UpdateDate = DateTime.Now;
+            shiftRequiredSpecialty.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             _repository.Update(shiftRequiredSpecialty);
             await _repository.SaveAsync();
 
