@@ -1,7 +1,7 @@
 ﻿{
   "disks": [
     {
-      "name": "my-disk",
+      "name": "images",
       "mountTo": "wwwroot/images"
     },
     {
