@@ -7,22 +7,51 @@ using ShiftYar.Domain.Entities.ShiftDateModel;
 using ShiftYar.Application.Interfaces.IFileSystem;
 using System.Globalization;
 using System.Text.Json;
+using ShiftYar.Application.Common.Models.ResponseModel;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using ShiftYar.Application.DTOs.DepartmentModel;
 
 namespace ShiftYar.Application.Features.CalendarSeeder.Services
 {
     public class CalendarSeederService : ICalendarSeederService
     {
         private readonly IEfRepository<ShiftDate> _shiftDateRepository;
-        private readonly ILogger<ShiftDate> _logger;
+        private readonly ILogger<CalendarSeederService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFileSystemService _fileSystem;
 
-        public CalendarSeederService(IEfRepository<ShiftDate> shiftDateRepository, ILogger<ShiftDate> logger, IHttpContextAccessor httpContextAccessor, IFileSystemService fileSystem)
+        public CalendarSeederService(IEfRepository<ShiftDate> shiftDateRepository, ILogger<CalendarSeederService> logger, IHttpContextAccessor httpContextAccessor, IFileSystemService fileSystem)
         {
             _shiftDateRepository = shiftDateRepository;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _fileSystem = fileSystem;
+        }
+
+        public async Task<ApiResponse<PagedResponse<ShiftDate>>> GetDatesAsync(ShiftDateFilter filter)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching dates with filters: {@Filter}", filter);
+                var result = await _shiftDateRepository.GetByFilterAsync(filter);
+
+                var pagedResponse = new PagedResponse<ShiftDate>
+                {
+                    Items = result.Items,
+                    TotalCount = result.TotalCount,
+                    PageNumber = filter.PageNumber,
+                    PageSize = filter.PageSize,
+                    TotalPages = (int)Math.Ceiling(result.TotalCount / (double)filter.PageSize)
+                };
+
+                _logger.LogInformation("Successfully fetched {Count} departments out of {TotalCount}", result.Items.Count, result.TotalCount);
+                return ApiResponse<PagedResponse<ShiftDate>>.Success(pagedResponse);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching dates");
+                return ApiResponse<PagedResponse<ShiftDate>>.Fail("خطا در دریافت لیست تاریخ‌ها: " + ex.Message);
+            }
         }
 
         public async Task SeedShiftDatesAsync(int year)

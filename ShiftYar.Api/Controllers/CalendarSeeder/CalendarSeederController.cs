@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShiftYar.Application.Common.Models.ResponseModel;
+using ShiftYar.Application.Features.CalendarSeeder.Filters;
 using ShiftYar.Application.Interfaces.CalendarSeeder;
+using ShiftYar.Domain.Entities.ShiftDateModel;
 using ShiftYar.Infrastructure.Persistence.AppDbContext;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ShiftYar.Api.Controllers.CalendarSeeder
 {
@@ -11,6 +15,20 @@ namespace ShiftYar.Api.Controllers.CalendarSeeder
         public CalendarSeederController(ShiftYarDbContext context, ICalendarSeederService calendarSeeder) : base(context)
         {
             _calendarSeeder = calendarSeeder;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<ApiResponse<PagedResponse<ShiftDate>>>> GetDates([FromQuery] ShiftDateFilter filter)
+        {
+            try
+            {
+                var result = await _calendarSeeder.GetDatesAsync(filter);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<PagedResponse<ShiftDate>>.Fail("خطا در دریافت لیست تاریخ‌ها: " + ex.Message));
+            }
         }
 
         [HttpPost]
