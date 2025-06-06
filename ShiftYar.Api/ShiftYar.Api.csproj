@@ -40,7 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\Holidays\" />
     <Folder Include="wwwroot\files\" />
   </ItemGroup>
 

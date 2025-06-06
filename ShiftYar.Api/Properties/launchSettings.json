@@ -4,7 +4,7 @@
     "ShiftYar.Api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "applicationUrl": "http://localhost:5186;https://localhost:7023",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

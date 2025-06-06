@@ -283,7 +283,10 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("HolidayTitle")
+                    b.Property<string>("DayTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HolidayEvent")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsHoliday")

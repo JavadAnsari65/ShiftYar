@@ -5,12 +5,6 @@ using ShiftYar.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//// Configure Kestrel
-//builder.WebHost.ConfigureKestrel(serverOptions =>
-//{
-//    serverOptions.ListenAnyIP(80); // Listen on port 80
-//});
-
 // مشخص کردن فایل تنظیمات بر اساس محیط
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -70,7 +64,6 @@ try
     var app = builder.Build();
     Log.Information("Application built successfully");
 
-    // Middleware
     // Enable Swagger in both Development and Production
     app.UseSwagger();
     app.UseSwaggerUI(c =>
@@ -113,59 +106,3 @@ finally
 {
     Log.CloseAndFlush();
 }
-
-//using Serilog;
-//using ShiftYar.Infrastructure;
-//using ShiftYar.API;
-//using ShiftYar.Application;
-
-//var builder = WebApplication.CreateBuilder(args);
-
-//// Configure Serilog
-//builder.Host.UseSerilog((context, services, configuration) => configuration
-//    .ReadFrom.Configuration(context.Configuration)
-//    .ReadFrom.Services(services)
-//    .Enrich.FromLogContext()
-//    .Enrich.WithThreadId()
-//    .Enrich.WithEnvironmentName()
-//);
-
-//try
-//{
-//    Log.Information("Starting web application");
-
-//    // Add services from different layers
-//    builder.Services.AddApplication();
-//    builder.Services.AddInfrastructure(builder.Configuration);
-//    builder.Services.AddAPI(builder.Configuration);
-
-//    builder.Services.AddHttpContextAccessor();
-
-//    var app = builder.Build();
-
-//    // Middleware
-//    if (app.Environment.IsDevelopment())
-//    {
-//        app.UseSwagger();
-//        app.UseSwaggerUI(c =>
-//        {
-//            c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShiftYar API V1");
-//            c.RoutePrefix = string.Empty; // swagger در root باز شود
-//        });
-//    }
-
-//    app.UseHttpsRedirection();
-//    app.UseAuthentication();
-//    app.UseAuthorization();
-//    app.MapControllers();
-
-//    app.Run();
-//}
-//catch (Exception ex)
-//{
-//    Log.Fatal(ex, "Application terminated unexpectedly");
-//}
-//finally
-//{
-//    Log.CloseAndFlush();
-//}

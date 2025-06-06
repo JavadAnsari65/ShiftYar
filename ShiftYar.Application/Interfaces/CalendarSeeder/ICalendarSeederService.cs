@@ -9,5 +9,7 @@ namespace ShiftYar.Application.Interfaces.CalendarSeeder
     public interface ICalendarSeederService
     {
         Task SeedShiftDatesAsync(int year);
+        Task SetAsHolidayAsync(string persianDate, string holidayEvent);
+        Task SetAsRegularDayAsync(string persianDate, string holidayEvent);
     }
 }
