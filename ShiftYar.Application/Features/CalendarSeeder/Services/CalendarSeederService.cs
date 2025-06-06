@@ -1,27 +1,28 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using ShiftYar.Application.Features.CalendarSeeder.Filters;
 using ShiftYar.Application.Interfaces.CalendarSeeder;
+using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Domain.Entities.ShiftDateModel;
-using ShiftYar.Infrastructure.Persistence.AppDbContext;
-using System;
-using System.Collections.Generic;
+using ShiftYar.Application.Interfaces.IFileSystem;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 
-namespace ShiftYar.Infrastructure.Services.CalendarSeeder
+namespace ShiftYar.Application.Features.CalendarSeeder.Services
 {
     public class CalendarSeederService : ICalendarSeederService
     {
-        private readonly ShiftYarDbContext _context;
-        private readonly IWebHostEnvironment _env;
+        private readonly IEfRepository<ShiftDate> _shiftDateRepository;
+        private readonly ILogger<ShiftDate> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IFileSystemService _fileSystem;
 
-        public CalendarSeederService(ShiftYarDbContext context, IWebHostEnvironment env)
+        public CalendarSeederService(IEfRepository<ShiftDate> shiftDateRepository, ILogger<ShiftDate> logger, IHttpContextAccessor httpContextAccessor, IFileSystemService fileSystem)
         {
-            _context = context;
-            _env = env;
+            _shiftDateRepository = shiftDateRepository;
+            _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
+            _fileSystem = fileSystem;
         }
 
         public async Task SeedShiftDatesAsync(int year)
@@ -29,13 +30,13 @@ namespace ShiftYar.Infrastructure.Services.CalendarSeeder
             try
             {
                 // مسیر فایل JSON تعطیلات (مثلاً holidays_1403.json)
-                string path = Path.Combine(_env.ContentRootPath, "Resources", "Holidays", $"holidays_{year}.json");
+                string path = _fileSystem.CombinePath("Resources", "Holidays", $"holidays_{year}.json");
 
-                if (!File.Exists(path))
+                if (!_fileSystem.FileExists(path))
                     throw new FileNotFoundException($"Holiday file not found for year {year}.");
 
                 // خواندن JSON و تبدیل به لیست تعطیلات
-                var json = await File.ReadAllTextAsync(path);
+                var json = await _fileSystem.ReadAllTextAsync(path);
                 var holidays = JsonSerializer.Deserialize<List<HolidayEntry>>(json)!;
 
                 var shiftDates = new List<ShiftDate>();
@@ -77,12 +78,10 @@ namespace ShiftYar.Infrastructure.Services.CalendarSeeder
                         TheUserId = null // یا یک مقدار ثابت در صورت نیاز
                     };
 
-                    shiftDates.Add(shiftDate);
+                    await _shiftDateRepository.AddAsync(shiftDate);
                 }
 
-                // ذخیره در دیتابیس
-                _context.ShiftDates.AddRange(shiftDates);
-                await _context.SaveChangesAsync();
+                await _shiftDateRepository.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -90,23 +89,7 @@ namespace ShiftYar.Infrastructure.Services.CalendarSeeder
             }
         }
 
-        // گرفتن نام فارسی روز هفته
-        private string GetPersianDayOfWeekTitle(DayOfWeek dayOfWeek)
-        {
-            return dayOfWeek switch
-            {
-                DayOfWeek.Saturday => "شنبه",
-                DayOfWeek.Sunday => "یکشنبه",
-                DayOfWeek.Monday => "دوشنبه",
-                DayOfWeek.Tuesday => "سه‌شنبه",
-                DayOfWeek.Wednesday => "چهارشنبه",
-                DayOfWeek.Thursday => "پنجشنبه",
-                DayOfWeek.Friday => "جمعه",
-                _ => "نامشخص"
-            };
-        }
-
-        public async Task SetAsHolidayAsync(string persianDate, string? holidayEvent)
+        public async Task SetAsHolidayAsync(string persianDate, string holidayEvent)
         {
             try
             {
@@ -122,18 +105,22 @@ namespace ShiftYar.Infrastructure.Services.CalendarSeeder
 
                 var date = persianCalendar.ToDateTime(year, month, day, 0, 0, 0, 0);
 
-                var calendarDate = await _context.ShiftDates.FirstOrDefaultAsync(x => x.Date == date.Date);
-                if (calendarDate == null)
+                var calendarDate = await _shiftDateRepository.GetByFilterAsync(
+                    new ShiftDateFilter(x => x.Date == date.Date)
+                );
+
+                if (calendarDate.Items.Count == 0)
                 {
                     throw new Exception("تاریخ مورد نظر یافت نشد");
                 }
 
-                calendarDate.IsHoliday = true;
-                calendarDate.HolidayEvent = holidayEvent;
-                calendarDate.UpdateDate = DateTime.Now;
-                calendarDate.TheUserId = null;
+                var shiftDate = calendarDate.Items.First();
+                shiftDate.IsHoliday = true;
+                shiftDate.HolidayEvent = holidayEvent;
+                shiftDate.UpdateDate = DateTime.Now;
 
-                await _context.SaveChangesAsync();
+                _shiftDateRepository.Update(shiftDate);
+                await _shiftDateRepository.SaveAsync();
             }
             catch (FormatException)
             {
@@ -161,18 +148,22 @@ namespace ShiftYar.Infrastructure.Services.CalendarSeeder
 
                 var date = persianCalendar.ToDateTime(year, month, day, 0, 0, 0, 0);
 
-                var calendarDate = await _context.ShiftDates.FirstOrDefaultAsync(x => x.Date == date.Date);
-                if (calendarDate == null)
+                var calendarDate = await _shiftDateRepository.GetByFilterAsync(
+                    new ShiftDateFilter(x => x.Date == date.Date)
+                );
+
+                if (calendarDate.Items.Count == 0)
                 {
                     throw new Exception("تاریخ مورد نظر یافت نشد");
                 }
 
-                calendarDate.IsHoliday = false;
-                calendarDate.HolidayEvent = holidayEvent;
-                calendarDate.UpdateDate = DateTime.Now;
-                calendarDate.TheUserId = null;
+                var shiftDate = calendarDate.Items.First();
+                shiftDate.IsHoliday = false;
+                shiftDate.HolidayEvent = holidayEvent;
+                shiftDate.UpdateDate = DateTime.Now;
 
-                await _context.SaveChangesAsync();
+                _shiftDateRepository.Update(shiftDate);
+                await _shiftDateRepository.SaveAsync();
             }
             catch (FormatException)
             {
@@ -183,8 +174,23 @@ namespace ShiftYar.Infrastructure.Services.CalendarSeeder
                 throw new Exception("خطا در تبدیل تاریخ: " + ex.Message);
             }
         }
-    }
 
+        // گرفتن نام فارسی روز هفته
+        private string GetPersianDayOfWeekTitle(DayOfWeek dayOfWeek)
+        {
+            return dayOfWeek switch
+            {
+                DayOfWeek.Saturday => "شنبه",
+                DayOfWeek.Sunday => "یکشنبه",
+                DayOfWeek.Monday => "دوشنبه",
+                DayOfWeek.Tuesday => "سه‌شنبه",
+                DayOfWeek.Wednesday => "چهارشنبه",
+                DayOfWeek.Thursday => "پنجشنبه",
+                DayOfWeek.Friday => "جمعه",
+                _ => "نامشخص"
+            };
+        }
+    }
 
     // کلاس مدل تعطیلات
     public class HolidayEntry
@@ -193,81 +199,3 @@ namespace ShiftYar.Infrastructure.Services.CalendarSeeder
         public string Title { get; set; } = default!;
     }
 }
-
-
-
-//using Microsoft.AspNetCore.Hosting;
-//using ShiftYar.Application.Interfaces.CalendarSeeder;
-//using ShiftYar.Domain.Entities.ShiftDateModel;
-//using ShiftYar.Infrastructure.Persistence.AppDbContext;
-//using System;
-//using System.Collections.Generic;
-//using System.Globalization;
-//using System.Linq;
-//using System.Text;
-//using System.Text.Json;
-//using System.Threading.Tasks;
-
-//namespace ShiftYar.Infrastructure.Services.CalendarSeeder
-//{
-//    public class CalendarSeederService : ICalendarSeederService
-//    {
-//        private readonly ShiftYarDbContext _context;
-//        private readonly IWebHostEnvironment _env;
-
-//        public CalendarSeederService(ShiftYarDbContext context, IWebHostEnvironment env)
-//        {
-//            _context = context;
-//            _env = env;
-//        }
-
-//        public async Task SeedShiftDatesAsync(int year)
-//        {
-//            try
-//            {
-//                string path = Path.Combine(_env.ContentRootPath, "Resources", "Holidays", $"holidays_{year}.json");
-
-//                if (!File.Exists(path))
-//                    throw new FileNotFoundException($"Holiday file not found for year {year}.");
-
-//                var json = await File.ReadAllTextAsync(path);
-//                var holidays = JsonSerializer.Deserialize<List<HolidayEntry>>(json)!;
-
-//                var startDate = new DateTime(year - 621, 3, 21); // تقریباً ابتدای سال شمسی
-//                var endDate = startDate.AddYears(1);
-
-//                var shiftDates = new List<ShiftDate>();
-
-//                for (var date = startDate; date < endDate; date = date.AddDays(1))
-//                {
-//                    var persian = new PersianCalendar();
-//                    string persianDate = $"{persian.GetYear(date):0000}/{persian.GetMonth(date):00}/{persian.GetDayOfMonth(date):00}";
-
-//                    var match = holidays.FirstOrDefault(h => h.Date == 
-//                    );
-
-//                    shiftDates.Add(new ShiftDate
-//                    {
-//                        Date = date.Date,
-//                        PersianDate = persianDate,
-//                        IsHoliday = match != null,
-//                        HolidayEvent = match?.Title
-//                    });
-//                }
-
-//                _context.ShiftDates.AddRange(shiftDates);
-//                await _context.SaveChangesAsync();
-//            }
-//            catch (Exception ex)
-//            {
-//                throw new Exception("سرویس بروزرسانی تقویم با خطا مواجه شد : " + ex.Message);
-//            }
-//        }
-//    }
-
-//    public class HolidayEntry
-//    {
-//        public string Date { get; set; } = default!; // yyyy/MM/dd
-//        public string Title { get; set; } = default!;
-//    }
-//}

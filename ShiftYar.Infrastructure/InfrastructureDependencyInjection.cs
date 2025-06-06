@@ -9,7 +9,8 @@ using ShiftYar.Infrastructure.Services.Security;
 using ShiftYar.Application.Interfaces.HospitalModel;
 using ShiftYar.Application.Interfaces.Security;
 using ShiftYar.Application.Interfaces.CalendarSeeder;
-using ShiftYar.Infrastructure.Services.CalendarSeeder;
+using ShiftYar.Application.Interfaces.IFileSystem;
+using ShiftYar.Infrastructure.Services.FileSystem;
 
 namespace ShiftYar.Infrastructure
 {
@@ -69,8 +70,7 @@ namespace ShiftYar.Infrastructure
         {
             services.AddScoped<IHospitalService, HospitalService>();
             services.AddScoped<IJwtService, JwtService>();
-            services.AddScoped<ICalendarSeederService, CalendarSeederService>();
-
+            services.AddScoped<IFileSystemService, FileSystemService>();
         }
     }
 }
