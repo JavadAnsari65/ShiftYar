@@ -22,6 +22,8 @@ namespace ShiftYar.Application.Features.UserModel.Filters
         public bool? IsProjectPersonnel { get; set; } // پرسنل طرحی بودن
         public UserGender? Gender { get; set; }   //جنسیت
         public int? DepartmentId { get; set; } // شناسه دپارتمان
+        public string? Province { get; set; }
+        public string? City { get; set; }
         public string Search { get; set; } // 🔍 جستجوی ترکیبی
 
         // Pagination parameters
@@ -93,6 +95,20 @@ namespace ShiftYar.Application.Features.UserModel.Filters
             {
                 Expression<Func<User, bool>> departmentExpr = user => user.DepartmentId == DepartmentId;
                 expression = CombineExpressions(expression, departmentExpr);
+            }
+
+            // فیلتر براساس نام استان
+            if (!string.IsNullOrEmpty(Province))
+            {
+                Expression<Func<User, bool>> provinceExpr = user => user.Province.Contains(Province);
+                expression = CombineExpressions(expression, provinceExpr);
+            }
+
+            // فیلتر براساس نام شهر
+            if (!string.IsNullOrEmpty(City))
+            {
+                Expression<Func<User, bool>> cityExpr = user => user.City.Contains(City);
+                expression = CombineExpressions(expression, cityExpr);
             }
 
             // جستجوی ترکیبی

@@ -15,6 +15,8 @@ namespace ShiftYar.Domain.Entities.HospitalModel
         public int? Id { get; set; }
         public string? SiamCode { get; set; }
         public string? Name { get; set; }
+        public string? Province { get; set; }
+        public string? City { get; set; }
         public string? Address { get; set; }
         public List<HospitalPhoneNumber>? PhoneNumbers { get; set; }
         public string? Email { get; set; }
@@ -30,6 +32,8 @@ namespace ShiftYar.Domain.Entities.HospitalModel
             this.Id = null;
             this.SiamCode = null;
             this.Name = null;
+            this.Province = null;
+            this.City = null;
             this.Address = null;
             this.PhoneNumbers = null;
             this.Email = null;

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShiftYar.Infrastructure.Persistence.AppDbContext;
 
@@ -11,9 +12,11 @@ using ShiftYar.Infrastructure.Persistence.AppDbContext;
 namespace ShiftYar.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ShiftYarDbContext))]
-    partial class ShiftYarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250607063625_EditUserModel040317")]
+    partial class EditUserModel040317
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,49 +24,6 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ShiftYar.Domain.Entities.AddressModel.City", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ProvinceId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Slug")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProvinceId");
-
-                    b.ToTable("Cities");
-                });
-
-            modelBuilder.Entity("ShiftYar.Domain.Entities.AddressModel.Province", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Slug")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Provinces");
-                });
 
             modelBuilder.Entity("ShiftYar.Domain.Entities.DepartmentModel.Department", b =>
                 {
@@ -117,9 +77,6 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
@@ -136,9 +93,6 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Province")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SiamCode")
@@ -687,15 +641,6 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRoles");
-                });
-
-            modelBuilder.Entity("ShiftYar.Domain.Entities.AddressModel.City", b =>
-                {
-                    b.HasOne("ShiftYar.Domain.Entities.AddressModel.Province", "Province")
-                        .WithMany()
-                        .HasForeignKey("ProvinceId");
-
-                    b.Navigation("Province");
                 });
 
             modelBuilder.Entity("ShiftYar.Domain.Entities.DepartmentModel.Department", b =>

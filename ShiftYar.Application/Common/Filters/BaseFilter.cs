@@ -9,6 +9,9 @@ namespace ShiftYar.Application.Common.Filters
 {
     public abstract class BaseFilter<T> : IFilter<T>
     {
+        public string SortBy { get; set; }
+        public bool SortAscending { get; set; } = true;
+
         public abstract Expression<Func<T, bool>> GetExpression();
 
         // متد کمکی برای ترکیب دو شرط به صورت AND منطقی

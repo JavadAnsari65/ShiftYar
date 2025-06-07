@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,8 @@ namespace ShiftYar.Domain.Entities.UserModel
         public DateTime? DateOfEmployment { get; set; } // تاریخ استخدام
         public bool? IsProjectPersonnel { get; set; } // آیا پرسنل طرحی است یا خیر
         public string? Email { get; set; }
+        public string? Province { get; set; }
+        public string? City { get; set; }
         public string? Address { get; set; }
         public bool? IsActive { get; set; }
         public string? Image { get; set; }
@@ -59,6 +62,8 @@ namespace ShiftYar.Domain.Entities.UserModel
             this.IsActive = null;
             this.Email = null;
             this.OtherPhoneNumbers = new List<UserPhoneNumber>();
+            this.Province = null;
+            this.City = null;
             this.Address = null;
             this.Image = null;
             this.UserRoles = new List<UserRole>();

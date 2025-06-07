@@ -10,6 +10,8 @@ namespace ShiftYar.Application.Features.HospitalModel.Filters
         public int? Id { get; set; }
         public string? SiamCode { get; set; }
         public string? Name { get; set; }
+        public string? Province { get; set; }
+        public string? City { get; set; }
         public string? Address { get; set; }
         public string? Description { get; set; }
         public string? PhoneNumber { get; set; }
@@ -43,6 +45,20 @@ namespace ShiftYar.Application.Features.HospitalModel.Filters
             {
                 Expression<Func<Hospital, bool>> nameExpr = hospital => hospital.Name.Contains(Name);
                 expression = CombineExpressions(expression, nameExpr);
+            }
+
+            // فیلتر براساس نام استان
+            if (!string.IsNullOrEmpty(Province))
+            {
+                Expression<Func<Hospital, bool>> provinceExpr = hospital => hospital.Province.Contains(Province);
+                expression = CombineExpressions(expression, provinceExpr);
+            }
+
+            // فیلتر براساس نام شهر
+            if (!string.IsNullOrEmpty(City))
+            {
+                Expression<Func<Hospital, bool>> cityExpr = hospital => hospital.City.Contains(City);
+                expression = CombineExpressions(expression, cityExpr);
             }
 
             // فیلتر براساس آدرس

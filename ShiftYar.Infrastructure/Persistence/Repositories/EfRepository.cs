@@ -38,6 +38,26 @@ namespace ShiftYar.Infrastructure.Persistence.Repositories
                 if (filter != null)
                     query = query.Where(filter.GetExpression());
 
+                // Apply sorting if the filter is a BaseFilter with sorting properties
+                if (filter is BaseFilter<T> baseFilter_Sort && !string.IsNullOrEmpty(baseFilter_Sort.SortBy))
+                {
+                    var parameter = Expression.Parameter(typeof(T), "x");
+                    var property = Expression.Property(parameter, baseFilter_Sort.SortBy);
+
+                    // Create a conversion expression to convert the property to object
+                    var convertedProperty = Expression.Convert(property, typeof(object));
+                    var lambda = Expression.Lambda(convertedProperty, parameter);
+
+                    if (baseFilter_Sort.SortAscending)
+                    {
+                        query = query.OrderBy((Expression<Func<T, object>>)lambda);
+                    }
+                    else
+                    {
+                        query = query.OrderByDescending((Expression<Func<T, object>>)lambda);
+                    }
+                }
+
                 // Get total count before pagination
                 int totalCount = await query.CountAsync();
 

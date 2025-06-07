@@ -22,6 +22,8 @@ using ShiftYar.Application.Interfaces.FileUploaderInterface;
 using ShiftYar.Application.Features.FileUploader.Services;
 using ShiftYar.Application.Features.CalendarSeeder.Services;
 using ShiftYar.Application.Interfaces.CalendarSeeder;
+using ShiftYar.Application.Interfaces.AddressModel;
+using ShiftYar.Application.Features.AddressModel.Services;
 
 namespace ShiftYar.Application
 {
@@ -50,6 +52,8 @@ namespace ShiftYar.Application
             services.AddScoped<IShiftService, ShiftService>();
             services.AddScoped<IFileUploader, FileUploaderService>();
             services.AddScoped<ICalendarSeederService, CalendarSeederService>();
+            services.AddScoped<IProvinceService, ProvinceService>();
+            services.AddScoped<ICityService, CityService>();
         }
     }
 }

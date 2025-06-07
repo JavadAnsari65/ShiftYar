@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ShiftYar.Domain.Entities.AddressModel;
 using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.HospitalModel;
 using ShiftYar.Domain.Entities.PermissionModel;
@@ -23,6 +24,8 @@ namespace ShiftYar.Infrastructure.Persistence.AppDbContext
 
         }
 
+        public DbSet<Province> Provinces { get; set; }
+        public DbSet<City> Cities { get; set; }
         public DbSet<Hospital> Hospitals { get; set; }
         public DbSet<HospitalPhoneNumber> HospitalPhoneNumbers { get; set; }
         public DbSet<Department> Departments { get; set; }
