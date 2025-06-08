@@ -62,7 +62,7 @@ namespace ShiftYar.Api.Controllers.HospitalModel
 
         ///ویرایش بیمارستان
         [HttpPut]
-        public async Task<IActionResult> UpdateHosputal(int id, [FromBody] HospitalDtoAdd dto)
+        public async Task<IActionResult> UpdateHospital(int id, [FromBody] HospitalDtoAdd dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ApiResponse<string>.Fail("ورودی نامعتبر است."));
