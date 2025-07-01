@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShiftYar.Infrastructure.Persistence.AppDbContext;
 
@@ -11,9 +12,11 @@ using ShiftYar.Infrastructure.Persistence.AppDbContext;
 namespace ShiftYar.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ShiftYarDbContext))]
-    partial class ShiftYarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250612163954_AddShiftRequestModel")]
+    partial class AddShiftRequestModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -514,67 +517,6 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                     b.ToTable("Specialties");
                 });
 
-            modelBuilder.Entity("ShiftYar.Domain.Entities.ShiftRequestModel.ShiftRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("ApprovalDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Reason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("RequestAction")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("RequestDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("RequestType")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ShiftDateId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ShiftLabel")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SupervisorComment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SupervisorId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TheUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ShiftDateId");
-
-                    b.HasIndex("SupervisorId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ShiftRequests");
-                });
-
             modelBuilder.Entity("ShiftYar.Domain.Entities.UserModel.LoginHistory", b =>
                 {
                     b.Property<int>("Id")
@@ -859,27 +801,6 @@ namespace ShiftYar.Infrastructure.Persistence.Migrations
                         .HasForeignKey("DepartmentId");
 
                     b.Navigation("Department");
-                });
-
-            modelBuilder.Entity("ShiftYar.Domain.Entities.ShiftRequestModel.ShiftRequest", b =>
-                {
-                    b.HasOne("ShiftYar.Domain.Entities.ShiftDateModel.ShiftDate", "ShiftDate")
-                        .WithMany()
-                        .HasForeignKey("ShiftDateId");
-
-                    b.HasOne("ShiftYar.Domain.Entities.UserModel.User", "Supervisor")
-                        .WithMany()
-                        .HasForeignKey("SupervisorId");
-
-                    b.HasOne("ShiftYar.Domain.Entities.UserModel.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("ShiftDate");
-
-                    b.Navigation("Supervisor");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ShiftYar.Domain.Entities.UserModel.LoginHistory", b =>

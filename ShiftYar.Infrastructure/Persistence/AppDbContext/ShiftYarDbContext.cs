@@ -8,6 +8,7 @@ using ShiftYar.Domain.Entities.RolePermissionModel;
 using ShiftYar.Domain.Entities.SecurityModel;
 using ShiftYar.Domain.Entities.ShiftDateModel;
 using ShiftYar.Domain.Entities.ShiftModel;
+using ShiftYar.Domain.Entities.ShiftRequestModel;
 using ShiftYar.Domain.Entities.UserModel;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,7 @@ namespace ShiftYar.Infrastructure.Persistence.AppDbContext
         public DbSet<Shift> Shifts { get; set; }
         public DbSet<ShiftRequiredSpecialty> ShiftRequiredSpecialties { get; set; }
         public DbSet<ShiftAssignment> ShiftAssignments { get; set; }
+        public DbSet<ShiftRequest> ShiftRequests { get; set; }
 
         public DbSet<ShiftDate> ShiftDates { get; set; }
 

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using ShiftYar.Application.Common.Models.ResponseModel;
 using ShiftYar.Application.DTOs.UserModel;
 using ShiftYar.Application.Features.UserModel.Filters;
+using ShiftYar.Application.Interfaces.FileUploaderInterface;
 using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Application.Interfaces.UserModel;
 using ShiftYar.Domain.Entities.DepartmentModel;
@@ -20,9 +21,11 @@ namespace ShiftYar.Application.Features.UserModel.Services
         private readonly IMapper _mapper; // AutoMapper
         private readonly ILogger<UserService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IFileUploader _fileUploader;
 
         public UserService(IEfRepository<User> repository, IEfRepository<UserPhoneNumber> repositoryPhoneNumber,
-                                IEfRepository<UserRole> repositoryUserRole, IMapper mapper, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor)
+                                IEfRepository<UserRole> repositoryUserRole, IMapper mapper, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor,
+                                IFileUploader fileUploader)
         {
             _repository = repository;
             _mapper = mapper;
@@ -30,6 +33,7 @@ namespace ShiftYar.Application.Features.UserModel.Services
             _repositoryUserRole = repositoryUserRole;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
+            _fileUploader = fileUploader;
         }
 
         /// Get All User
@@ -112,6 +116,7 @@ namespace ShiftYar.Application.Features.UserModel.Services
 
                 var user = _mapper.Map<User>(dto);
 
+                user.Image = _fileUploader.UploadFile(dto.Image, "Users");
                 user.CreateDate = DateTime.Now;
                 user.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
 
@@ -237,6 +242,12 @@ namespace ShiftYar.Application.Features.UserModel.Services
 
                 // Update other user properties
                 _mapper.Map(dto, user);
+
+                //Update Image
+                if(dto.Image != null)
+                {
+                    user.Image = _fileUploader.UpdateFile(dto.Image, user.Image, "Users");
+                }
 
                 user.CreateDate = DateTime.Now;
                 user.TheUserId = Convert.ToInt16(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
