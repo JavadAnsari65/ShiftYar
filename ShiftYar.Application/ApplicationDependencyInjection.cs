@@ -24,6 +24,8 @@ using ShiftYar.Application.Features.CalendarSeeder.Services;
 using ShiftYar.Application.Interfaces.CalendarSeeder;
 using ShiftYar.Application.Interfaces.AddressModel;
 using ShiftYar.Application.Features.AddressModel.Services;
+using ShiftYar.Application.Interfaces.ShiftRequestModel;
+using ShiftYar.Application.Features.ShiftRequestModel.Services;
 
 namespace ShiftYar.Application
 {
@@ -54,6 +56,7 @@ namespace ShiftYar.Application
             services.AddScoped<ICalendarSeederService, CalendarSeederService>();
             services.AddScoped<IProvinceService, ProvinceService>();
             services.AddScoped<ICityService, CityService>();
+            services.AddScoped<IShiftRequestService, ShiftRequestService>();
         }
     }
 }
