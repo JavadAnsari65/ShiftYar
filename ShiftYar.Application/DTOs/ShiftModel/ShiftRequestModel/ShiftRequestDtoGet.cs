@@ -15,14 +15,14 @@ namespace ShiftYar.Application.DTOs.ShiftModel.ShiftRequestModel
         public int? Id { get; set; }
         public int? UserId { get; set; }
         public User? User { get; set; }
-        public int? ShiftDateId { get; set; }
-        public ShiftDate? ShiftDate { get; set; }
+        public DateTime? RequestDate { get; set; }  //تاریخ مورد درخواست
+        //public int? ShiftDateId { get; set; }
+        //public ShiftDate? ShiftDate { get; set; }
         public RequestType? RequestType { get; set; }
         public ShiftLabel? ShiftLabel { get; set; }
         public RequestAction? RequestAction { get; set; }
         public RequestStatus? Status { get; set; }
         public string? Reason { get; set; }
-        public DateTime? RequestDate { get; set; }
         public int? SupervisorId { get; set; }
         public string? SupervisorFullName { get; set; }
         public string? SupervisorComment { get; set; }

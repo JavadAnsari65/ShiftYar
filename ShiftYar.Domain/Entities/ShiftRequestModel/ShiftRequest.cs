@@ -22,16 +22,17 @@ namespace ShiftYar.Domain.Entities.ShiftRequestModel
         public int? UserId { get; set; }
         public User? User { get; set; }
 
-        [ForeignKey("ShiftDate")]
-        public int? ShiftDateId { get; set; }
-        public ShiftDate? ShiftDate { get; set; }
+        public DateTime? RequestDate { get; set; }  //تاریخ مورد درخواست
+
+        //[ForeignKey("ShiftDate")]
+        //public int? ShiftDateId { get; set; }
+        //public ShiftDate? ShiftDate { get; set; }
 
         public RequestType? RequestType { get; set; } //FullDay, SpecificShift
         public ShiftLabel? ShiftLabel { get; set; } //Morning, Evening, Night
         public RequestAction? RequestAction { get; set; } //RequestToBeOnShift, RequestToBeOffShift
         public RequestStatus? Status { get; set; } //Pending, Approved, Rejected
         public string? Reason { get; set; }
-        public DateTime? RequestDate { get; set; }
 
         // اطلاعات تأیید
         [ForeignKey("Supervisor")]
@@ -46,14 +47,14 @@ namespace ShiftYar.Domain.Entities.ShiftRequestModel
             this.Id = null;
             this.UserId = null;
             this.User = null;
-            this.ShiftDateId = null;
-            this.ShiftDate = null;
+            this.RequestDate = null;
+            //this.ShiftDateId = null;
+            //this.ShiftDate = null;
             this.RequestType = null;
             this.ShiftLabel = null;
             this.RequestAction = null;
             this.Status = null;
             this.Reason = null;
-            this.RequestDate = null;
             this.SupervisorId = null;
             this.Supervisor = null;
             this.SupervisorComment = null;

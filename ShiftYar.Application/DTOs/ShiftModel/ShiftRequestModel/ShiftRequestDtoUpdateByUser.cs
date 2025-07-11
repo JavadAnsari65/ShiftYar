@@ -8,9 +8,9 @@ using static ShiftYar.Domain.Enums.ShiftModel.ShiftEnums;
 
 namespace ShiftYar.Application.DTOs.ShiftModel.ShiftRequestModel
 {
-    public class ShiftRequestDtoAdd
+    public class ShiftRequestDtoUpdateByUser
     {
-        public int? UserId { get; set; }  //کاربر درخواست دهنده
+        public int Id { get; set; }
         public string? RequestPersianDate { get; set; }  //تاریخ شمسی مورد درخواست کاربر
         public RequestType? RequestType { get; set; }
         public ShiftLabel? ShiftLabel { get; set; }
