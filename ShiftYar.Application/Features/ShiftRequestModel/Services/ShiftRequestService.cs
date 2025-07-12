@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using ShiftYar.Application.Common.Models.ResponseModel;
+using ShiftYar.Application.DTOs.ShiftModel;
 using ShiftYar.Application.DTOs.ShiftModel.ShiftRequestModel;
+using ShiftYar.Application.Features.ShiftModel.Filters;
 using ShiftYar.Application.Features.ShiftRequestModel.Filters;
 using ShiftYar.Application.Interfaces.Persistence;
 using ShiftYar.Application.Interfaces.ShiftRequestModel;
@@ -55,7 +57,6 @@ namespace ShiftYar.Application.Features.ShiftRequestModel.Services
                 entity.RequestDate = ConvertToGregorianDate(dto.RequestPersianDate);
                 entity.SupervisorId = supervisorId;
                 entity.Status = RequestStatus.Pending;
-                entity.RequestDate = DateTime.Now;
                 await _repository.AddAsync(entity);
                 await _repository.SaveAsync();
                 var result = _mapper.Map<ShiftRequestDtoGet>(entity);
@@ -71,11 +72,14 @@ namespace ShiftYar.Application.Features.ShiftRequestModel.Services
         {
             try
             {
-                var entity = await _repository.GetByIdAsync(id, "User", "ShiftDate", "Supervisor");
+                var entity = await _repository.GetByIdAsync(id, "User", "Supervisor");
                 if (entity == null)
                     return ApiResponse<ShiftRequestDtoGet>.Fail("درخواست مورد نظر یافت نشد.");
                 if (entity.Status != RequestStatus.Pending)
                     return ApiResponse<ShiftRequestDtoGet>.Fail("امکان ویرایش این درخواست وجود ندارد.");
+
+                entity.RequestDate = ConvertToGregorianDate(dto.RequestPersianDate);
+
                 _mapper.Map(dto, entity);
                 await _repository.SaveAsync();
                 var result = _mapper.Map<ShiftRequestDtoGet>(entity);
@@ -87,19 +91,20 @@ namespace ShiftYar.Application.Features.ShiftRequestModel.Services
             }
         }
 
-        public async Task<ApiResponse<ShiftRequestDtoGet>> UpdateShiftRequestBySupervisorAsync(ShiftRequestDtoUpdateBySupervisor dto)
+        public async Task<ApiResponse<ShiftRequestDtoGet>> UpdateShiftRequestBySupervisorAsync(int id, ShiftRequestDtoUpdateBySupervisor dto)
         {
             try
             {
-                var entity = await _repository.GetByIdAsync(dto.Id, "User", "Supervisor");
+                var entity = await _repository.GetByIdAsync(id, "User", "Supervisor");
                 if (entity == null)
                     return ApiResponse<ShiftRequestDtoGet>.Fail("درخواست مورد نظر یافت نشد.");
                 if (entity.Status != RequestStatus.Pending)
                     return ApiResponse<ShiftRequestDtoGet>.Fail("درخواست قبلاً بررسی شده است.");
+
                 entity.Status = dto.Status;
                 entity.SupervisorComment = dto.SupervisorComment;
                 entity.ApprovalDate = DateTime.Now;
-                // SupervisorId باید از context گرفته شود
+
                 await _repository.SaveAsync();
                 var result = _mapper.Map<ShiftRequestDtoGet>(entity);
                 return ApiResponse<ShiftRequestDtoGet>.Success(result, "درخواست با موفقیت بررسی شد.");
@@ -172,6 +177,35 @@ namespace ShiftYar.Application.Features.ShiftRequestModel.Services
             catch (Exception ex)
             {
                 return ApiResponse<List<ShiftRequestDtoGet>>.Fail($"خطا در دریافت لیست درخواست‌ها: {ex.Message}");
+            }
+        }
+
+        public async Task<ApiResponse<PagedResponse<ShiftRequestDtoGet>>> GetShiftRequestsAsync(ShiftRequestFilter filter)
+        {
+            try
+            {
+                _logger.LogInformation("Getting filtered shiftRequests");
+
+                var (items, totalCount) = await _repository.GetByFilterAsync(filter,
+                    "User",
+                    "Supervisor");
+
+                var shiftRequests = items.Select(s => _mapper.Map<ShiftRequestDtoGet>(s)).ToList();
+
+                var pagedResponse = new PagedResponse<ShiftRequestDtoGet>
+                {
+                    Items = shiftRequests,
+                    TotalCount = totalCount,
+                    PageNumber = filter.PageNumber,
+                    PageSize = filter.PageSize,
+                    TotalPages = (int)Math.Ceiling(totalCount / (double)filter.PageSize)
+                };
+
+                return ApiResponse<PagedResponse<ShiftRequestDtoGet>>.Success(pagedResponse, "لیست درخواست های شیفت‌ با موفقیت دریافت شد.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("سرویس دریافت درخواست های شیفت با خطا مواجه شد : " + ex.Message);
             }
         }
 

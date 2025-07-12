@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShiftYar.Application.DTOs.ShiftModel.ShiftRequestModel;
+using ShiftYar.Application.Features.ShiftRequestModel.Filters;
 using ShiftYar.Application.Interfaces.ShiftRequestModel;
 using ShiftYar.Infrastructure.Persistence.AppDbContext;
 
@@ -14,53 +15,91 @@ namespace ShiftYar.Api.Controllers.ShiftRequestModel
             _service = service;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetShiftRequest(int id)
+        {
+            try
+            {
+                var result = await _service.GetShiftRequestAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات دریافت درخواست شیفت‌ با خطا مواجه شد : " + ex.Message);
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetShiftRequests([FromQuery] ShiftRequestFilter filter)
+        {
+            try
+            {
+                var result = await _service.GetShiftRequestsAsync(filter);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات دریافت درخواست های شیفت‌ با خطا مواجه شد : " + ex.Message);
+            }
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateShiftRequest([FromBody] ShiftRequestDtoAdd dto)
         {
-            var result = await _service.CreateShiftRequestAsync(dto);
-            return Ok(result);
+            try
+            {
+                var result = await _service.CreateShiftRequestAsync(dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات ثبت درخواست های شیفت‌ با خطا مواجه شد : " + ex.Message);
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateShiftRequestByUser(int id, [FromBody] ShiftRequestDtoAdd dto)
         {
-            var result = await _service.UpdateShiftRequestByUserAsync(id, dto);
-            return Ok(result);
+            try
+            {
+                var result = await _service.UpdateShiftRequestByUserAsync(id, dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات ویرایش درخواست شیفت‌ با خطا مواجه شد : " + ex.Message);
+            }
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateShiftRequestBySupervisor([FromBody] ShiftRequestDtoUpdateBySupervisor dto)
+        public async Task<IActionResult> UpdateShiftRequestBySupervisor(int id, [FromBody] ShiftRequestDtoUpdateBySupervisor dto)
         {
-            var result = await _service.UpdateShiftRequestBySupervisorAsync(dto);
-            return Ok(result);
+            try
+            {
+                var result = await _service.UpdateShiftRequestBySupervisorAsync(id, dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات ویرایش درخواست شیفت‌ با خطا مواجه شد : " + ex.Message);
+            }
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteShiftRequest(int id)
         {
-            var result = await _service.DeleteShiftRequestAsync(id);
-            return Ok(result);
+            try
+            {
+                var result = await _service.DeleteShiftRequestAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات حذف درخواست شیفت‌ با خطا مواجه شد : " + ex.Message);
+            }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetShiftRequest(int id)
-        {
-            var result = await _service.GetShiftRequestAsync(id);
-            return Ok(result);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetUserShiftRequests(int userId)
-        {
-            var result = await _service.GetUserShiftRequestsAsync(userId);
-            return Ok(result);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllShiftRequest()
-        {
-            var result = await _service.GetAllShiftRequestsAsync();
-            return Ok(result);
-        }
     }
 }
