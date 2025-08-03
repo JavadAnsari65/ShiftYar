@@ -30,6 +30,7 @@ namespace ShiftYar.Application.DTOs.UserModel
 
         [EmailAddress(ErrorMessage = "ایمیل نامعتبر است.")]
         public string? Email { get; set; }
+        public string? Password { get; set; } // اختیاری: ست کردن پسورد هنگام ایجاد کاربر
         public string? Province { get; set; }
         public string? City { get; set; }
         public string? Address { get; set; }

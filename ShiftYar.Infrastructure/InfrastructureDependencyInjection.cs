@@ -11,6 +11,7 @@ using ShiftYar.Application.Interfaces.Security;
 using ShiftYar.Application.Interfaces.CalendarSeeder;
 using ShiftYar.Application.Interfaces.IFileSystem;
 using ShiftYar.Infrastructure.Services.FileSystem;
+using ShiftYar.Application.Interfaces.SmsModel;
 
 namespace ShiftYar.Infrastructure
 {
@@ -64,6 +65,7 @@ namespace ShiftYar.Infrastructure
         private static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped(typeof(IEfRepository<>), typeof(EfRepository<>));
+            services.AddScoped<ISmsTemplateRepository, SmsTemplateRepository>();
         }
 
         private static void AddInfrastructureServices(this IServiceCollection services)
@@ -71,6 +73,7 @@ namespace ShiftYar.Infrastructure
             services.AddScoped<IHospitalService, HospitalService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IFileSystemService, FileSystemService>();
+            services.AddScoped<IAuthService, AuthService>();
         }
     }
 }

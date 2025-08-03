@@ -26,6 +26,8 @@ using ShiftYar.Application.Interfaces.AddressModel;
 using ShiftYar.Application.Features.AddressModel.Services;
 using ShiftYar.Application.Interfaces.ShiftRequestModel;
 using ShiftYar.Application.Features.ShiftRequestModel.Services;
+using ShiftYar.Application.Features.SmsModel;
+using ShiftYar.Application.Interfaces.SmsModel;
 
 namespace ShiftYar.Application
 {
@@ -57,6 +59,8 @@ namespace ShiftYar.Application
             services.AddScoped<IProvinceService, ProvinceService>();
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IShiftRequestService, ShiftRequestService>();
+            services.AddScoped<ISmsTemplateService, SmsTemplateService>();
+            services.AddScoped<ISmsService, SmsService>();
         }
     }
 }

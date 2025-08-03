@@ -9,6 +9,7 @@ using ShiftYar.Domain.Entities.SecurityModel;
 using ShiftYar.Domain.Entities.ShiftDateModel;
 using ShiftYar.Domain.Entities.ShiftModel;
 using ShiftYar.Domain.Entities.ShiftRequestModel;
+using ShiftYar.Domain.Entities.SmsModel;
 using ShiftYar.Domain.Entities.UserModel;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,10 @@ namespace ShiftYar.Infrastructure.Persistence.AppDbContext
         public DbSet<ShiftRequest> ShiftRequests { get; set; }
 
         public DbSet<ShiftDate> ShiftDates { get; set; }
+
+        public DbSet<OtpCode> OtpCodes { get; set; }
+        public DbSet<PasswordResetCode> PasswordResetCodes { get; set; }
+        public DbSet<SmsTemplate> SmsTemplates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
