@@ -10,9 +10,9 @@ namespace ShiftYar.Application.Interfaces.Security
     public interface IAuthService
     {
         Task<LoginResponseDto> LoginWithPasswordAsync(LoginWithPasswordRequestDto dto, string ip, string device);
-        Task SendOtpAsync(SendOtpRequestDto dto);
+        Task SendOtpAsync_Login(SendOtpRequestDto dto);
         Task<LoginResponseDto> LoginWithOtpAsync(LoginWithOtpRequestDto dto, string ip, string device);
-        Task ForgotPasswordAsync(ForgotPasswordRequestDto dto);
+        Task SendOtp_ForgotPasswordAsync(ForgotPasswordRequestDto dto);
         Task ResetPasswordAsync(ResetPasswordRequestDto dto);
         Task<string> RefreshTokenAsync(string refreshToken);
         Task LogoutAsync(string refreshToken);

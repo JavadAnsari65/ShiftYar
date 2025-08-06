@@ -79,12 +79,17 @@ namespace ShiftYar.Infrastructure.Services.Security
             };
         }
 
-        public async Task SendOtpAsync(SendOtpRequestDto dto)
+        public async Task SendOtpAsync_Login(SendOtpRequestDto dto)
         {
             const int expireMinutes = 5;
             const int maxAttempts = 5;
             var now = DateTime.Now;
             var phone = dto.PhoneNumberMembership;
+
+            //آیا این شماره قبلا ثبت مام کرده که بخواد وارد بشه
+            var userExist = _context.Users.Any(u => u.PhoneNumberMembership == dto.PhoneNumberMembership);
+            if (!userExist)
+                throw new Exception("شماره وارد شده هنوز ثبت نام نکرده است. لطفا ابتدا ثبت نام کنید.");
 
             // حذف کدهای منقضی شده
             var expiredOtps = _context.OtpCodes.Where(o => o.PhoneNumber == phone && o.ExpireAt < now);
@@ -111,9 +116,13 @@ namespace ShiftYar.Infrastructure.Services.Security
             _context.OtpCodes.Add(otp);
             await _context.SaveChangesAsync();
 
-            // ارسال پیامک با قالب داینامیک
-            string message = _smsTemplateService.GetTemplate("login", ("code", code), ("expire", expireMinutes.ToString()));
-            await _smsService.SendSmsAsync(phone, message);
+            //// ارسال پیامک با قالب داینامیک
+            //string message = _smsTemplateService.GetTemplate("login", ("code", code), ("expire", expireMinutes.ToString()));
+            //await _smsService.SendSmsAsync(phone, message);
+
+            //ارسال پیامک با قالب تعریف شده در پنل کاوه نگار
+            //login : اسم قالب پیامکی است که در پنل ایده نگار تعریف کردم
+            await _smsService.SendLookupAsync(phone, code, "login", expireMinutes.ToString());
         }
 
         public async Task<LoginResponseDto> LoginWithOtpAsync(LoginWithOtpRequestDto dto, string ip, string device)
@@ -175,12 +184,17 @@ namespace ShiftYar.Infrastructure.Services.Security
             };
         }
 
-        public async Task ForgotPasswordAsync(ForgotPasswordRequestDto dto)
+        public async Task SendOtp_ForgotPasswordAsync(ForgotPasswordRequestDto dto)
         {
             const int expireMinutes = 5;
             const int maxAttempts = 5;
             var now = DateTime.Now;
             var phone = dto.PhoneNumberMembership;
+
+            //آیا این شماره قبلا ثبت نام کرده که بخواد رمزش رو عوض کنه
+            var userExist = _context.Users.Any(u => u.PhoneNumberMembership == dto.PhoneNumberMembership);
+            if (!userExist)
+                throw new Exception("شماره وارد شده هنوز ثبت نام نکرده است. لطفا ابتدا ثبت نام کنید.");
 
             // حذف کدهای منقضی شده
             var expiredCodes = _context.PasswordResetCodes.Where(o => o.PhoneNumber == phone && o.ExpireAt < now);
@@ -207,9 +221,13 @@ namespace ShiftYar.Infrastructure.Services.Security
             _context.PasswordResetCodes.Add(resetCode);
             await _context.SaveChangesAsync();
 
-            // ارسال پیامک با قالب داینامیک
-            string message = _smsTemplateService.GetTemplate("forgotPassword", ("code", code), ("expire", expireMinutes.ToString()));
-            await _smsService.SendSmsAsync(phone, message);
+            //// ارسال پیامک با قالب داینامیک
+            //string message = _smsTemplateService.GetTemplate("forgotPassword", ("code", code), ("expire", expireMinutes.ToString()));
+            //await _smsService.SendSmsAsync(phone, message);
+
+            //ارسال پیامک با قالب تعریف شده در پنل کاوه نگار
+            //forgotPassword : اسم قالب پیامکی است که در پنل ایده نگار تعریف کردم
+            await _smsService.SendLookupAsync(phone, code, "forgotPassword", expireMinutes.ToString());
         }
 
         public async Task ResetPasswordAsync(ResetPasswordRequestDto dto)

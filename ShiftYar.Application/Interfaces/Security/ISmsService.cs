@@ -9,5 +9,6 @@ namespace ShiftYar.Application.Interfaces.Security
     public interface ISmsService
     {
         Task SendSmsAsync(string phoneNumber, string message);
+        Task<bool> SendLookupAsync(string receptor, string token, string template, string token2 = null, string token3 = null);
     }
 }

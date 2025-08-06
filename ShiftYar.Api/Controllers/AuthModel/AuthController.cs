@@ -48,7 +48,7 @@ namespace ShiftYar.Api.Controllers.AuthModel
         {
             try
             {
-                await _authService.SendOtpAsync(dto);
+                await _authService.SendOtpAsync_Login(dto);
                 return Ok(new { status = 200, message = "کد با موفقیت ارسال شد." });
             }
             catch (Exception ex)
@@ -84,7 +84,7 @@ namespace ShiftYar.Api.Controllers.AuthModel
         {
             try
             {
-                await _authService.ForgotPasswordAsync(dto);
+                await _authService.SendOtp_ForgotPasswordAsync(dto);
                 return Ok(new { status = 200, message = "کد بازیابی ارسال شد." });
             }
             catch (Exception ex)
