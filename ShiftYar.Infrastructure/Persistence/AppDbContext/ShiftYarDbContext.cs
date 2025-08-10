@@ -31,6 +31,7 @@ namespace ShiftYar.Infrastructure.Persistence.AppDbContext
         public DbSet<Hospital> Hospitals { get; set; }
         public DbSet<HospitalPhoneNumber> HospitalPhoneNumbers { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<DepartmentName> DepartmentNames { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<LoginHistory> LoginHistories { get; set; }
@@ -41,6 +42,7 @@ namespace ShiftYar.Infrastructure.Persistence.AppDbContext
 
         //جدول تخصص های لازم در هر شیفت
         public DbSet<Specialty> Specialties { get; set; }
+        public DbSet<SpecialtyName> SpecialtyNames { get; set; }
         public DbSet<Shift> Shifts { get; set; }
         public DbSet<ShiftRequiredSpecialty> ShiftRequiredSpecialties { get; set; }
         public DbSet<ShiftAssignment> ShiftAssignments { get; set; }

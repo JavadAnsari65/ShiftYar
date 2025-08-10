@@ -48,10 +48,12 @@ namespace ShiftYar.Application
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
+            services.AddScoped<IDepartmentNameService, DepartmentNameService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<IRolePermissionService, RolePermissionService>();
             services.AddScoped<ISpecialtyService, SpecialtyService>();
+            services.AddScoped<ISpecialtyNameService, SpecialtyNameService>();
             services.AddScoped<IShiftRequiredSpecialtyService, ShiftRequiredSpecialtyService>();
             services.AddScoped<IShiftService, ShiftService>();
             services.AddScoped<IFileUploader, FileUploaderService>();

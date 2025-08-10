@@ -39,6 +39,12 @@ namespace ShiftYar.Infrastructure.Services.Security
                 .Include(u => u.LoginHistories)
                 .SingleOrDefaultAsync(x => x.PhoneNumberMembership == dto.PhoneNumberMembership);
 
+            if (user.Password == null)
+            {
+                _logger.LogWarning($"ورود ناموفق | شماره تلفن: {dto.PhoneNumberMembership} | IP: {ip} | دستگاه: {device}");
+                throw new UnauthorizedAccessException("نام کاربری یا رمز عبور اشتباه است.");
+            }
+
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
             {
                 _logger.LogWarning($"ورود ناموفق | شماره تلفن: {dto.PhoneNumberMembership} | IP: {ip} | دستگاه: {device}");

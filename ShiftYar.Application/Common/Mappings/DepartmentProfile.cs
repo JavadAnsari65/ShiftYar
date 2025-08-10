@@ -16,6 +16,10 @@ namespace ShiftYar.Application.Common.Mappings
             CreateMap<User, SupervisorDto>();
             CreateMap<User, UserDto>();
             CreateMap<DepartmentDtoAdd, Department>();
+
+            // DepartmentName mappings
+            CreateMap<DepartmentName, DepartmentNameDtoGet>();
+            CreateMap<DepartmentNameDtoAdd, DepartmentName>();
         }
     }
 }
