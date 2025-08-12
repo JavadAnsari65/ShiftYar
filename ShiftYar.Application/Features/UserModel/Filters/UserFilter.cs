@@ -19,6 +19,7 @@ namespace ShiftYar.Application.Features.UserModel.Filters
         public string? PersonnelCode { get; set; }  //شماره کارمندی
         public string PhoneNumberMembership { get; set; } // شماره تلفن عضویت
         public bool? IsActive { get; set; } // وضعیت فعال بودن
+        public bool? CanBeShiftManager { get; set; }  //آیا میتونه مسئول شیفت باشه؟
         public bool? IsProjectPersonnel { get; set; } // پرسنل طرحی بودن
         public UserGender? Gender { get; set; }   //جنسیت
         public int? DepartmentId { get; set; } // شناسه دپارتمان
@@ -74,6 +75,13 @@ namespace ShiftYar.Application.Features.UserModel.Filters
             {
                 Expression<Func<User, bool>> isActiveExpr = user => user.IsActive == IsActive;
                 expression = CombineExpressions(expression, isActiveExpr);
+            }
+
+            // فیلتر براساس امکان مسئول شیفت بودن
+            if (CanBeShiftManager.HasValue)
+            {
+                Expression<Func<User, bool>> canBeShiftManagerExpr = user => user.CanBeShiftManager == CanBeShiftManager;
+                expression = CombineExpressions(expression, canBeShiftManagerExpr);
             }
 
             // فیلتر براساس جنسیت

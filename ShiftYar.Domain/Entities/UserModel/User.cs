@@ -31,6 +31,7 @@ namespace ShiftYar.Domain.Entities.UserModel
         public string? City { get; set; }
         public string? Address { get; set; }
         public bool? IsActive { get; set; }
+        public bool? CanBeShiftManager { get; set; }   //آیا میتونه مسئول شیفت باشه؟
         public string? Image { get; set; }
 
         [ForeignKey("Department")]
@@ -60,6 +61,7 @@ namespace ShiftYar.Domain.Entities.UserModel
             this.DateOfEmployment = null;
             this.IsProjectPersonnel = null;
             this.IsActive = null;
+            this.CanBeShiftManager = null;
             this.Email = null;
             this.OtherPhoneNumbers = new List<UserPhoneNumber>();
             this.Province = null;

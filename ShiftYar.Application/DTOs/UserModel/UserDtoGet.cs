@@ -26,6 +26,7 @@ namespace ShiftYar.Application.DTOs.UserModel
         public string? City { get; set; }
         public string? Address { get; set; }
         public bool? IsActive { get; set; }
+        public bool? CanBeShiftManager { get; set; }
         public string? Image { get; set; }
         public int? DepartmentId { get; set; }
         public Department? Department { get; set; }
