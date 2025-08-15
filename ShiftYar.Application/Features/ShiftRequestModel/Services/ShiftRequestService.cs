@@ -68,6 +68,74 @@ namespace ShiftYar.Application.Features.ShiftRequestModel.Services
             }
         }
 
+        public async Task<ApiResponse<ShiftRequestDtoGet>> CreateShiftRequestForLeaveAsync(ShiftRequestForLeaveDtoAdd dto)
+        {
+            try
+            {
+                //استخراج دپارتمان کاربر، برای دسترسی به سوپروایزر دپارتمان
+                var userDepatmentId = _repositoryUser.GetByIdAsync(dto.UserId).Result.DepartmentId;
+
+                if (!userDepatmentId.HasValue)
+                    return ApiResponse<ShiftRequestDtoGet>.Fail("کاربر درخواست دهنده، متعلق به هیچ دپارتمانی نیست.");
+
+                //استخراج شناسه سوپروایزر
+                var supervisorId = _repositorDepartment.GetByIdAsync(userDepatmentId).Result.SupervisorId;
+
+                if (!supervisorId.HasValue)
+                    return ApiResponse<ShiftRequestDtoGet>.Fail("برای دپارتمان کاربر درخواست دهنده، سوپروایزر تعیین نشده است.");
+
+                var startDate = ConvertToGregorianDate(dto.StartPersianDate);
+                var endDate = ConvertToGregorianDate(dto.EndPersianDate);
+
+                if (endDate < startDate)
+                    return ApiResponse<ShiftRequestDtoGet>.Fail("تاریخ پایان نمی‌تواند قبل از تاریخ شروع باشد.");
+
+                int createdCount = 0;
+                ShiftRequest? lastCreated = null;
+
+                for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                {
+                    // جلوگیری از ثبت درخواست تکراری در همان تاریخ برای همان کاربر
+                    bool exists = await _repository.ExistsAsync(x =>
+                        x.UserId == dto.UserId &&
+                        x.RequestDate == date &&
+                        x.RequestType == RequestType.FullDay &&
+                        x.RequestAction == RequestAction.RequestToBeOffShift);
+
+                    if (exists)
+                        continue;
+
+                    var entity = new ShiftRequest
+                    {
+                        UserId = dto.UserId,
+                        RequestDate = date,
+                        RequestType = RequestType.FullDay,
+                        RequestAction = RequestAction.RequestToBeOffShift,
+                        Status = RequestStatus.Pending,
+                        Reason = dto.Reason,
+                        SupervisorId = supervisorId
+                    };
+
+                    await _repository.AddAsync(entity);
+                    createdCount++;
+                    lastCreated = entity;
+                }
+
+                if (createdCount > 0)
+                    await _repository.SaveAsync();
+
+                var result = lastCreated != null ? _mapper.Map<ShiftRequestDtoGet>(lastCreated) : null;
+                var message = createdCount > 0
+                    ? $"درخواست مرخصی برای {createdCount} روز با موفقیت ثبت شد."
+                    : "در این بازه زمانی درخواست جدیدی ثبت نشد.";
+                return ApiResponse<ShiftRequestDtoGet>.Success(result, message);
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<ShiftRequestDtoGet>.Fail($"خطا در ثبت درخواست: {ex.Message}");
+            }
+        }
+
         public async Task<ApiResponse<ShiftRequestDtoGet>> UpdateShiftRequestByUserAsync(int id, ShiftRequestDtoAdd dto)
         {
             try
@@ -228,5 +296,6 @@ namespace ShiftYar.Application.Features.ShiftRequestModel.Services
             var persianCalendar = new PersianCalendar();
             return persianCalendar.ToDateTime(year, month, day, 0, 0, 0, 0);
         }
+
     }
 }

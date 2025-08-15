@@ -13,6 +13,7 @@ namespace ShiftYar.Application.Interfaces.ShiftRequestModel
     public interface IShiftRequestService
     {
         Task<ApiResponse<ShiftRequestDtoGet>> CreateShiftRequestAsync(ShiftRequestDtoAdd dto);
+        Task<ApiResponse<ShiftRequestDtoGet>> CreateShiftRequestForLeaveAsync(ShiftRequestForLeaveDtoAdd dto);
         Task<ApiResponse<ShiftRequestDtoGet>> UpdateShiftRequestByUserAsync(int id, ShiftRequestDtoAdd dto);
         Task<ApiResponse<ShiftRequestDtoGet>> UpdateShiftRequestBySupervisorAsync(int id, ShiftRequestDtoUpdateBySupervisor dto);
         Task<ApiResponse<string>> DeleteShiftRequestAsync(int id);

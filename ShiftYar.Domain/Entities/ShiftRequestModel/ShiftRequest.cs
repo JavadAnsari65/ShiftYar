@@ -23,11 +23,6 @@ namespace ShiftYar.Domain.Entities.ShiftRequestModel
         public User? User { get; set; }
 
         public DateTime? RequestDate { get; set; }  //تاریخ مورد درخواست
-
-        //[ForeignKey("ShiftDate")]
-        //public int? ShiftDateId { get; set; }
-        //public ShiftDate? ShiftDate { get; set; }
-
         public RequestType? RequestType { get; set; } //FullDay, SpecificShift
         public ShiftLabel? ShiftLabel { get; set; } //Morning, Evening, Night
         public RequestAction? RequestAction { get; set; } //RequestToBeOnShift, RequestToBeOffShift

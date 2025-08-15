@@ -59,6 +59,20 @@ namespace ShiftYar.Api.Controllers.ShiftRequestModel
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateShiftRequestForLeave([FromBody] ShiftRequestForLeaveDtoAdd dto)
+        {
+            try
+            {
+                var result = await _service.CreateShiftRequestForLeaveAsync(dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("عملیات ثبت درخواست مرخصی با خطا مواجه شد : " + ex.Message);
+            }
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdateShiftRequestByUser(int id, [FromBody] ShiftRequestDtoAdd dto)
         {
