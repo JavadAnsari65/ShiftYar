@@ -14,6 +14,7 @@ namespace ShiftYar.Application.Interfaces.UserModel
         Task<ApiResponse<PagedResponse<UserDtoGet>>> GetFilteredUsersAsync(UserFilter filter);
         Task<ApiResponse<UserDtoAdd>> GetByIdAsync(int id);
         Task<ApiResponse<UserDtoAdd>> CreateAsync(UserDtoAdd dto);
+        Task<ApiResponse<string>> CreateSupervisorAndSendOtpAsync(UserDtoAdd userDto);
         Task<ApiResponse<UserDtoAdd>> UpdateAsync(int id, UserDtoAdd dto);
         Task<ApiResponse<string>> DeleteAsync(int id);
     }

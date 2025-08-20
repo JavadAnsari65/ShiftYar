@@ -64,6 +64,26 @@ namespace ShiftYar.Api.Controllers.UserModel
         }
 
 
+        /// ایجاد کاربر با نقش سوپروایزر و ارسال OTP جهت لاگین
+        [HttpPost]
+        public async Task<IActionResult> CreateUserSupervisorAndSendOtpForLogin([FromBody] UserDtoAdd dto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ApiResponse<string>.Fail("ورودی نامعتبر است."));
+
+                var result = await _userService.CreateSupervisorAndSendOtpAsync(dto);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطا در CreateUser_Supervisor_Init");
+                return BadRequest(ApiResponse<string>.Fail("عملیات با خطا مواجه شد : " + ex.Message));
+            }
+        }
+
+
         // ویرایش کاربر
         [HttpPut]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDtoAdd dto)

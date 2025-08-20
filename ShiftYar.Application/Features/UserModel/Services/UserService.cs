@@ -6,6 +6,8 @@ using ShiftYar.Application.DTOs.UserModel;
 using ShiftYar.Application.Features.UserModel.Filters;
 using ShiftYar.Application.Interfaces.FileUploaderInterface;
 using ShiftYar.Application.Interfaces.Persistence;
+using ShiftYar.Application.Interfaces.RoleModel;
+using ShiftYar.Application.Interfaces.Security;
 using ShiftYar.Application.Interfaces.UserModel;
 using ShiftYar.Domain.Entities.DepartmentModel;
 using ShiftYar.Domain.Entities.UserModel;
@@ -18,19 +20,23 @@ namespace ShiftYar.Application.Features.UserModel.Services
         private readonly IEfRepository<User> _repository;
         private readonly IEfRepository<UserPhoneNumber> _repositoryPhoneNumber;
         private readonly IEfRepository<UserRole> _repositoryUserRole;
+        private readonly IRoleService _roleService;
+        private readonly IAuthService _authService;
         private readonly IMapper _mapper; // AutoMapper
         private readonly ILogger<UserService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFileUploader _fileUploader;
 
         public UserService(IEfRepository<User> repository, IEfRepository<UserPhoneNumber> repositoryPhoneNumber,
-                                IEfRepository<UserRole> repositoryUserRole, IMapper mapper, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor,
+                                IEfRepository<UserRole> repositoryUserRole, IRoleService roleService, IAuthService authService, IMapper mapper, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor,
                                 IFileUploader fileUploader)
         {
             _repository = repository;
             _mapper = mapper;
             _repositoryPhoneNumber = repositoryPhoneNumber;
             _repositoryUserRole = repositoryUserRole;
+            _roleService = roleService;
+            _authService = authService;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _fileUploader = fileUploader;
@@ -138,6 +144,38 @@ namespace ShiftYar.Application.Features.UserModel.Services
                 _logger.LogWarning("User creation failed - NationalCode {NationalCode}", dto.NationalCode);
                 throw new Exception("سرویس ایجاد کاربر با خطا مواجه شد : " + ex.Message);
             }
+        }
+
+
+        ///Create User Supervisor And Send Otp For Login
+        public async Task<ApiResponse<string>> CreateSupervisorAndSendOtpAsync(UserDtoAdd userDto)
+        {
+            //نقش سوپروایزر را پیدا کن
+            var roleFilter = new RoleModel.Filters.RoleFilter { Name = "سوپروایزر", PageSize = 1 };
+            var roles = await _roleService.GetFilteredRolesAsync(roleFilter);
+            var supervisorRole = roles.Data.Items.FirstOrDefault();
+            if (supervisorRole == null)
+            {
+                return ApiResponse<string>.Fail("نقش سوپروایزر یافت نشد.");
+            }
+
+            //ست نقش سوپروایزر برای کاربر
+            userDto.UserRoles = new List<int> { supervisorRole.Id };
+
+            //ایجاد کاربر
+            var createResult = await this.CreateAsync(userDto);
+            if (!createResult.IsSuccess)
+            {
+                return ApiResponse<string>.Fail(createResult.Message ?? "ایجاد کاربر ناموفق بود.");
+            }
+
+            //ارسال OTP برای لاگین
+            await _authService.SendOtpAsync_Login(new SendOtpRequestDto
+            {
+                PhoneNumberMembership = userDto.PhoneNumberMembership
+            });
+
+            return ApiResponse<string>.Success("کد تایید برای شماره کاربر ارسال شد.");
         }
 
 
